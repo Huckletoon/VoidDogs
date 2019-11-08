@@ -1,0 +1,86 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Title.gd" type="Script" id=1]
+[ext_resource path="res://fonts/xolonium/xolonium.tres" type="DynamicFont" id=2]
+[ext_resource path="res://sprites/controller.png" type="Texture" id=3]
+
+[node name="Title" type="Node"]
+script = ExtResource( 1 )
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="VSplitContainer" type="VSplitContainer" parent="CenterContainer"]
+margin_left = 457.0
+margin_top = 256.0
+margin_right = 566.0
+margin_bottom = 344.0
+
+[node name="Title" type="Label" parent="CenterContainer/VSplitContainer"]
+margin_right = 109.0
+margin_bottom = 20.0
+custom_fonts/font = ExtResource( 2 )
+text = "Void Dogs"
+align = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/VSplitContainer"]
+margin_top = 32.0
+margin_right = 109.0
+margin_bottom = 88.0
+
+[node name="Start" type="Button" parent="CenterContainer/VSplitContainer/VBoxContainer"]
+margin_right = 109.0
+margin_bottom = 26.0
+custom_fonts/font = ExtResource( 2 )
+text = "Press Start"
+
+[node name="Exit" type="Button" parent="CenterContainer/VSplitContainer/VBoxContainer"]
+margin_top = 30.0
+margin_right = 109.0
+margin_bottom = 56.0
+custom_fonts/font = ExtResource( 2 )
+text = "Exit"
+
+[node name="Sprite" type="Sprite" parent="."]
+position = Vector2( 232.158, 221.718 )
+texture = ExtResource( 3 )
+
+[node name="Label" type="Label" parent="."]
+margin_left = 313.8
+margin_top = 56.0457
+margin_right = 385.8
+margin_bottom = 76.0457
+custom_fonts/font = ExtResource( 2 )
+text = "RT - Fire"
+
+[node name="Label4" type="Label" parent="."]
+margin_left = 119.175
+margin_top = 366.416
+margin_right = 335.175
+margin_bottom = 409.416
+custom_fonts/font = ExtResource( 2 )
+text = "1. Defeat 50 Enemy Ships
+2. Survive"
+
+[node name="Label2" type="Label" parent="."]
+margin_left = 66.0179
+margin_top = 42.3277
+margin_right = 175.018
+margin_bottom = 62.3277
+custom_fonts/font = ExtResource( 2 )
+text = "LT - Stabilize"
+
+[node name="Label3" type="Label" parent="."]
+margin_left = 73.7343
+margin_top = 72.3358
+margin_right = 161.734
+margin_bottom = 92.3358
+custom_fonts/font = ExtResource( 2 )
+text = "LB - Radar"
+
+[connection signal="pressed" from="CenterContainer/VSplitContainer/VBoxContainer/Start" to="." method="_on_Start_pressed"]
+[connection signal="pressed" from="CenterContainer/VSplitContainer/VBoxContainer/Exit" to="." method="_on_Exit_pressed"]
