@@ -7,7 +7,7 @@ var rng = RandomNumberGenerator.new()
 
 var vel = Vector2(0,0)
 var lookDir = Vector2()
-var fire_rate = 40
+var fire_rate = 100
 var fire_track = 0
 var maxHealth = 10
 var health = maxHealth
@@ -79,16 +79,7 @@ func _physics_process(delta):
 			get_tree().change_scene("res://Title.tscn")
 		
 	vel = move_and_slide(vel)
-	if shakeTrack != 0:
-		if shakeTrack % 4 == 0:
-			shakeX = rng.randf_range(-1, 1) * shakeMax
-			shakeY = rng.randf_range(-1, 1) * shakeMax
-		shakeTrack += 1
-		if shakeTrack >= shakeCool:
-			shakeTrack = 0
-			shakeX = 0
-			shakeY = 0
-		offsetCam(shakeX, shakeY, 0.1)
+	shake()
 	
 	
 func handleInput():
@@ -101,7 +92,6 @@ func handleInput():
 	elif vel.y < 0: vel.y += DRAG
 	if vel.x > 0: vel.x -= DRAG
 	elif vel.x < 0: vel.x += DRAG
-	
 	offsetCam(xvar * CAM_OFFSET_X, yvar * CAM_OFFSET_Y, CAM_SMOOTH)
 	radar.camOff = camera.offset
 	if yvar != 0 or xvar != 0: sprite.rotation = atan2(yvar, xvar) + PI/2
@@ -111,7 +101,6 @@ func handleInput():
 	
 	#fire
 	lookDir = Vector2(sin(sprite.rotation), -cos(sprite.rotation))
-	
 	if Input.is_action_pressed("pl_fire"):
 		if fire_track == 0:
 			var bullet = Bullet.instance()
@@ -121,8 +110,19 @@ func handleInput():
 			bullet.get_node("Sprite").rotation = sprite.rotation
 			get_parent().add_child(bullet)
 			fire_track = -1
-	
 	if fire_track != 0:
 		fire_track += fire_rate
 		if fire_track >= FIRE_COOL:
 			fire_track = 0
+
+func shake():
+	if shakeTrack != 0:
+		if shakeTrack % 4 == 0:
+			shakeX = rng.randf_range(-1, 1) * shakeMax
+			shakeY = rng.randf_range(-1, 1) * shakeMax
+		shakeTrack += 1
+		if shakeTrack >= shakeCool:
+			shakeTrack = 0
+			shakeX = 0
+			shakeY = 0
+		offsetCam(shakeX, shakeY, 0.1)

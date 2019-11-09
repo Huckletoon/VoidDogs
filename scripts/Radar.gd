@@ -1,7 +1,8 @@
 extends Control
 
 const PAD = 50
-const RANGE = 6000
+const RANGE = 5000
+const ASSIST_RANGE = 200
 const MAX_SIZE = 350
 const MIN_SIZE = 70
 const UI_SWAY = 0.25
@@ -46,6 +47,8 @@ onready var font = preload("res://fonts/xolonium/xolonium.tres")
 onready var cam = get_node("../Camera2D")
 onready var director = get_node("../../Director")
 
+func _ready():
+	pause_mode = PAUSE_MODE_PROCESS
 
 func _physics_process(delta):
 	#Radar
@@ -91,6 +94,9 @@ func _physics_process(delta):
 	if health <= 0 and deathAlpha < 1:
 		deathAlpha += 0.01
 	
+	#Pause
+	if Input.is_action_just_pressed("pl_start"): get_tree().paused = !get_tree().paused
+	
 	#DEBUG
 	var fpsX = scrnWidth * -0.5 + 16
 	var fpsY = scrnHeight * -0.5 + 32
@@ -99,11 +105,24 @@ func _physics_process(delta):
 	
 	update()
 
+func draw_outline(center):
+	var points = 48
+	var pointPool = PoolVector2Array()
+	var chunk = 2*PI / float(points)
+	
+	for i in range(points+1):
+		var point = i * chunk
+		pointPool.push_back(center + Vector2(cos(point) * 30, sin(point) * 60))
+		
+	for n in range(points):
+		draw_line(pointPool[n], pointPool[n+1], Color(0.4, 0.4, 0.4, 0.4))
+
 func _draw():
 	#Radar
 	var screen = Color.azure
 	screen.a = 0.3
 	draw_rect(radarRect, screen, true)
+	draw_outline(radarRect.position + radarRect.size/2)
 	if radarOn: draw_circle(radarRect.position + radarRect.size/2, 5, Color.blue)
 	else: draw_circle(radarRect.position + radarRect.size/2, 2, Color.blue)
 	if director != null:
@@ -145,6 +164,10 @@ func _draw():
 	if health <= 0:
 		draw_string(font,Vector2(-50, -64), "Game Over")
 		draw_string(font, Vector2(-54, -32), "Press Start")
+		
+	#Pause
+	if get_tree().paused:
+		draw_string(font,Vector2(-50, -64), "Paused")
 	
 	#DEBUG
 	draw_string(font, fpsPos, "FPS: " + Engine.get_frames_per_second() as String)

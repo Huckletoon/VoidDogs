@@ -9,7 +9,7 @@ var vel = Vector2()
 var lookDir = Vector2()
 var player
 var angle = 0
-var fireRate = 20
+var fireRate = 10
 var fireTrack = 0
 var fireCool = 1000
 var bulletSpeed = 1000
