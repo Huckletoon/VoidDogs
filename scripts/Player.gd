@@ -7,9 +7,11 @@ var rng = RandomNumberGenerator.new()
 
 var vel = Vector2(0,0)
 var lookDir = Vector2()
-var fire_rate = 100
+var fire_rate = 150
 var fire_track = 0
-var maxHealth = 10
+var fireHeat = 0
+var burned = false
+var maxHealth = 20
 var health = maxHealth
 var isDead = false
 
@@ -27,6 +29,8 @@ const ACCEL = 15
 const DRAG = 1
 const CAM_SMOOTH = 0.018
 const FIRE_COOL = 1000
+const MAX_HEAT = 1000
+const HEAT_COOL = 10
 const BULLET_SPEED = 2000
 const STABILIZER = 0.03
 
@@ -102,7 +106,7 @@ func handleInput():
 	#fire
 	lookDir = Vector2(sin(sprite.rotation), -cos(sprite.rotation))
 	if Input.is_action_pressed("pl_fire"):
-		if fire_track == 0:
+		if fire_track == 0 and !burned:
 			var bullet = Bullet.instance()
 			bullet.tracker = radar
 			bullet.position = position + lookDir*32
@@ -110,10 +114,17 @@ func handleInput():
 			bullet.get_node("Sprite").rotation = sprite.rotation
 			get_parent().add_child(bullet)
 			fire_track = -1
+			fireHeat += fire_rate + 8
+			if fireHeat >= MAX_HEAT:
+				burned = true
 	if fire_track != 0:
 		fire_track += fire_rate
 		if fire_track >= FIRE_COOL:
 			fire_track = 0
+	if fireHeat > 0:
+		fireHeat = max(0, fireHeat - HEAT_COOL)
+	elif burned:
+		burned = false
 
 func shake():
 	if shakeTrack != 0:

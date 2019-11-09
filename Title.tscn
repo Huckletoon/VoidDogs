@@ -75,12 +75,12 @@ custom_fonts/font = ExtResource( 2 )
 text = "LT - Stabilize"
 
 [node name="Label3" type="Label" parent="."]
-margin_left = 73.7343
+margin_left = 47.7343
 margin_top = 72.3358
-margin_right = 161.734
+margin_right = 195.734
 margin_bottom = 92.3358
 custom_fonts/font = ExtResource( 2 )
-text = "LB - Radar"
+text = "LB - Toggle Radar"
 
 [connection signal="pressed" from="CenterContainer/VSplitContainer/VBoxContainer/Start" to="." method="_on_Start_pressed"]
 [connection signal="pressed" from="CenterContainer/VSplitContainer/VBoxContainer/Exit" to="." method="_on_Exit_pressed"]

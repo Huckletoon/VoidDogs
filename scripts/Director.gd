@@ -14,16 +14,18 @@ onready var player = get_node("../Player")
 
 func _ready():
 	timer.process_mode = Timer.TIMER_PROCESS_PHYSICS
-	timer.wait_time = 1.5
+	timer.wait_time = 2.5
+	for i in range(10):
+		spawnEnemy()
 	timer.start()
 	rng.randomize()
 
-func _on_Timer_timeout():
+func spawnEnemy():
 	if ships.size() < MAX_SHIPS:
 		var enemy
 		match rng.randi_range(0,2):
-			0: enemy = Chaser.instance()
-			_: enemy = Enemy.instance()
+			1: enemy = Enemy.instance()
+			_: enemy = Chaser.instance()
 		
 		enemy.player = player
 		var relative = Vector2(rng.randf_range(-1, 1), rng.randf_range(-1, 1))
@@ -34,3 +36,6 @@ func _on_Timer_timeout():
 		enemy.position = player.position + Vector2(relative.x * rng.randi_range(1000,6000), relative.y * rng.randi_range(1000,6000))
 		ships.append(enemy)
 		add_child(enemy)
+
+func _on_Timer_timeout():
+	spawnEnemy()
