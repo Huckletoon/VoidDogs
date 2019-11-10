@@ -4,7 +4,7 @@ const PAD = 50
 const RANGE = 2500
 const ASSIST_RANGE = 200
 const MAX_SIZE = 350
-const MIN_SIZE = 70
+const MIN_SIZE = 10
 const UI_SWAY = 0.25
 
 #Radar
@@ -54,6 +54,7 @@ var hotCol = Color(0.9, 0.3, 0, 1)
 var fpsPos = Vector2.ZERO
 var physStep = 0
 
+onready var leftShoulder = preload("res://sprites/left_shoulder.png")
 onready var font = preload("res://fonts/xolonium/xolonium.tres")
 onready var cam = get_node("../Camera2D")
 onready var director = get_node("../../Director")
@@ -158,10 +159,12 @@ func drawRadar():
 	draw_rect(radarRect, screen, true)
 	draw_outline(radarRect.position + radarRect.size/2)
 	if radarOn: draw_circle(radarRect.position + radarRect.size/2, 5, Color.blue)
-	else: draw_circle(radarRect.position + radarRect.size/2, 2, Color.blue)
+	else: 
+		draw_circle(radarRect.position + radarRect.size/2, 2, Color.blue)
+		draw_texture(leftShoulder, radarRect.position + Vector2(radarRect.size.x, -radarRect.size.y - leftShoulder.get_height()/2))
 	if director != null:
+		var center = radarRect.position + radarRect.size/2
 		for ship in director.ships:
-			var center = radarRect.position + radarRect.size/2
 			var diff = ship.position - playerPos
 			if !(diff.x > RANGE or diff.x < -RANGE or diff.y > RANGE or diff.y < -RANGE):
 				var mag = diff.length()
@@ -169,13 +172,23 @@ func drawRadar():
 				mag = (mag / RANGE) * (radarRect.size.x/2)
 				var posit = center + diff * mag
 				
-				if radarOn: 
-					if ship.is_type("Enemy"): draw_circle(posit, 4, Color.darkgoldenrod)
-					elif ship.is_type("Chaser"): draw_circle(posit, 4, Color.firebrick)
-				else: 
-					if ship.is_type("Enemy"): draw_circle(posit, 1, Color.darkgoldenrod)
-					elif ship.is_type("Chaser"): draw_circle(posit, 1, Color.firebrick)
+				var blipSize = 4
+				if !radarOn: blipSize = 1
 				
+				if ship.is_type("Enemy"): draw_circle(posit, blipSize, Color.darkgoldenrod)
+				elif ship.is_type("Chaser"): draw_circle(posit, blipSize, Color.firebrick)
+				elif ship.is_type("Interceptor"): draw_circle(posit, blipSize, Color.darkmagenta)
+		for ship in director.allies:
+			var diff = ship.position - playerPos
+			if !(diff.x > RANGE or diff.x < -RANGE or diff.y > RANGE or diff.y < -RANGE):
+				var mag = diff.length()
+				diff = diff.normalized()
+				mag = (mag / RANGE) * (radarRect.size.x/2)
+				var posit = center + diff * mag
+				
+				var blipSize = 4
+				if !radarOn: blipSize = 1
+				if ship.is_type("Ally"): draw_circle( posit, blipSize, Color.cyan)
 
 func drawObjective():
 	draw_rect(barBackRect, Color.darkgray, true)

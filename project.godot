@@ -10,6 +10,11 @@ config_version=4
 
 _global_script_classes=[ {
 "base": "Area2D",
+"class": "Ally",
+"language": "GDScript",
+"path": "res://scripts/Ally.gd"
+}, {
+"base": "Area2D",
 "class": "Bullet",
 "language": "GDScript",
 "path": "res://scripts/Bullet.gd"
@@ -29,16 +34,23 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://scripts/Enemy.gd"
 }, {
+"base": "Area2D",
+"class": "Interceptor",
+"language": "GDScript",
+"path": "res://scripts/Interceptor.gd"
+}, {
 "base": "KinematicBody2D",
 "class": "Player",
 "language": "GDScript",
 "path": "res://scripts/Player.gd"
 } ]
 _global_script_class_icons={
+"Ally": "",
 "Bullet": "",
 "Chaser": "",
 "Director": "",
 "Enemy": "",
+"Interceptor": "",
 "Player": ""
 }
 

@@ -1,47 +1,48 @@
 extends Area2D
 
-class_name Chaser
+class_name Ally
 
 var Bullet = preload("res://objects/Bullet.tscn")
 
 var rng = RandomNumberGenerator.new()
 var vel = Vector2()
-var player
 var angle = 0
 var fireRate = 10
 var fireTrack = 0
 var fireCool = 1000
 var bulletSpeed = 1000
+var target = 0
 
 const MAX_SPEED = 500
 const ACCEL = 23
 const DRAG = 1
-const CLASS = "Chaser"
 const RANGE = 700
 const ORBIT = 400
 
 onready var sprite = get_node("Sprite")
 onready var timer = get_node("Timer")
+onready var director = get_parent().get_parent()
 
 func is_type(type):
-	return type == CLASS
-	
-func get_type():
-	return CLASS
+	return type == "Ally"
 
 func destroy():
-	get_parent().get_parent().ships.erase(self)
+	director.allies.erase(self)
 	self.queue_free()
 
 func _ready():
 	rng.randomize()
 	angle = rng.randf_range(0, 2*PI)
+	target = rng.randi_range(0, director.ships.size() - 1)
 	timer.wait_time = 10
 	timer.start()
 
 func _physics_process(delta):
 	
-	var diff = player.position - self.position
+	if target >= director.ships.size(): target = rng.randi_range(0, director.ships.size() - 1)
+	var targetShip = director.ships[target]
+	
+	var diff = targetShip.position - self.position
 	var dist = diff.length()
 	if dist > RANGE:
 		var orbit = Vector2(sin(angle), -cos(angle))
@@ -55,12 +56,12 @@ func _physics_process(delta):
 		
 		if fireTrack == 0:
 			var bullet = Bullet.instance()
-			bullet.team = 1
+			bullet.team = -1
 			bullet.position = position + diff*32
 			bullet.velocity = diff * bulletSpeed
 			bullet.get_node("Sprite").rotation = sprite.rotation
-			bullet.set_modulate(Color(1, 0.2, 0.2))
-			get_parent().add_child(bullet)
+			bullet.set_modulate(Color(0.2, 0.2, 1))
+			director.add_child(bullet)
 			fireTrack = -1
 		
 	if fireTrack != 0:

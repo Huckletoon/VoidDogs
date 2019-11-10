@@ -22,7 +22,7 @@ func get_type():
 	return CLASS
 
 func destroy():
-	get_parent().ships.erase(self)
+	get_parent().get_parent().ships.erase(self)
 	self.queue_free()
 
 func _ready():

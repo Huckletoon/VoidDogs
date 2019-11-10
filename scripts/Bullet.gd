@@ -19,13 +19,16 @@ func _physics_process(delta):
 
 func _on_Bullet_area_entered(area):
 	match team:
-		0:
-			if area.is_type("Enemy") or area.is_type("Chaser"):
-				tracker.currentKills += 1
+		0,-1:
+			if area.is_type("Enemy") or area.is_type("Chaser") or area.is_type("Interceptor"):
+				if team == 0: tracker.currentKills += 1
 				area.destroy()
 				self.queue_free()
 		1:
-			pass
+			if area.is_type("Ally"):
+				area.destroy()
+				self.queue_free()
+			
 
 
 func _on_Bullet_body_entered(body):
