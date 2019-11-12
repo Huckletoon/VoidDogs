@@ -3,7 +3,8 @@ extends Area2D
 class_name Interceptor
 
 var Bullet = preload("res://objects/Bullet.tscn")
-var font = preload("res://fonts/xolonium/xolonium.tres")
+#var font = preload("res://fonts/xolonium/xolonium.tres")
+var rng = RandomNumberGenerator.new()
 
 var vel = Vector2()
 var player
@@ -11,6 +12,8 @@ var fireRate = 8
 var fireTrack = 0
 var fireCool = 1000
 var bulletSpeed = 1500
+var targetIndex = -1
+var targetShip
 
 const MAX_SPEED = 1300
 const ACCEL = 32
@@ -20,6 +23,7 @@ const RANGE = 500
 const ORBIT = 300
 
 onready var sprite = get_node("Sprite")
+onready var director = get_parent().get_parent()
 
 func is_type(type):
 	return type == CLASS
@@ -28,15 +32,28 @@ func get_type():
 	return CLASS
 
 func destroy():
-	get_parent().get_parent().ships.erase(self)
+	director.enemiesKilled += 1
+	director.ships.erase(self)
 	self.queue_free()
 
+func getTarget():
+	if (rng.randi_range(0, director.allies.size()) < 4) or director.allies.size() < 1:
+		targetIndex = -1 #player
+		targetShip = player
+	else:
+		targetIndex = rng.randi_range(0, director.allies.size() - 1)
+		targetShip = director.allies[targetIndex]
+
 func _ready():
-	pass
+	rng.randomize()
+	getTarget()
 
 func _physics_process(delta):
 	
-	var target = player.position - self.position
+	if targetShip == null or targetShip.is_queued_for_deletion():
+		getTarget()
+	
+	var target = targetShip.position - self.position
 	var targetDist = target.length()
 	var farLead = target + player.vel * delta
 	var farLeadNorm = farLead.normalized()

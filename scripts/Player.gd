@@ -108,7 +108,6 @@ func handleInput():
 	if Input.is_action_pressed("pl_fire"):
 		if fire_track == 0 and !burned:
 			var bullet = Bullet.instance()
-			bullet.tracker = radar
 			bullet.position = position + lookDir*32
 			bullet.velocity = lookDir * BULLET_SPEED
 			bullet.get_node("Sprite").rotation = sprite.rotation

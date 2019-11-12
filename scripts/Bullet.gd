@@ -4,7 +4,6 @@ class_name Bullet
 
 var velocity = Vector2()
 var life = 300
-var tracker
 var damage = 1
 var team = 0
 
@@ -21,7 +20,6 @@ func _on_Bullet_area_entered(area):
 	match team:
 		0,-1:
 			if area.is_type("Enemy") or area.is_type("Chaser") or area.is_type("Interceptor"):
-				if team == 0: tracker.currentKills += 1
 				area.destroy()
 				self.queue_free()
 		1:

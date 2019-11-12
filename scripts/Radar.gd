@@ -21,11 +21,12 @@ var radarOn = false
 var barPos = Vector2.ZERO
 var barSize = Vector2.ZERO
 var barRect = Rect2(barPos, barSize)
-var targetKills = 50
-var currentKills = 0
 var barWidth = 300
 var barPad = 8
 var barBackRect = Rect2(barPos, barSize)
+var allyPos = Vector2.ZERO
+var allySize = Vector2.ZERO
+var allyRect = Rect2(allyPos, allySize)
 
 #Health
 var maxHealth = 0
@@ -75,17 +76,27 @@ func calcRadar():
 	radarRect.size = lerp(radarRect.size, size, UI_SWAY)
 
 func calcObjective():
-	var barX = -1 * (barWidth / 2) + camOff.x
+	var barX = barPad * 2.5 + camOff.x
 	var barY = -1 * (scrnHeight/2) + 24 + camOff.y
 	barPos = Vector2(barX, barY)
-	barSize = Vector2(barWidth - min(barWidth as float * (currentKills as float/targetKills as float), barWidth), 32)
+	barSize = Vector2(barWidth - min(barWidth as float * (director.enemiesKilled as float/director.enemyTarget as float)
+		, barWidth), 32)
 	barRect.position = lerp(barRect.position, barPos, UI_SWAY)
 	barRect.size = barSize
+	
+	allyPos = barPos
+	allyPos.x -= (barWidth + barPad * 6)
+	allySize = Vector2(barWidth - min(barWidth as float * (director.alliesKilled as float/director.allyTarget as float)
+		, barWidth), 32)
+	allyRect.position = lerp(allyRect.position, allyPos, UI_SWAY)
+	allyRect.size = allySize
 	
 	barPos -= Vector2(barPad, barPad)
 	barSize = Vector2(barWidth + 2*barPad, barSize.y + 2*barPad)
 	barBackRect.position = lerp(barBackRect.position, barPos, UI_SWAY)
 	barBackRect.size = barSize
+	
+	
 
 func calcHealth():
 	var healthX = scrnWidth/2 - healthPad - 90 + camOff.x
@@ -194,14 +205,22 @@ func drawObjective():
 	draw_rect(barBackRect, Color.darkgray, true)
 	draw_rect(barRect, Color.darkgoldenrod, true)
 	
+	draw_rect(Rect2(barBackRect.position - Vector2(barWidth + barPad * 6, 0), barBackRect.size), Color.darkgray, true)
+	draw_rect(allyRect, Color.darkblue, true)
+	
 	var textPos = barRect.position
 	textPos.x += barPad
 	textPos.y += barRect.size.y - barPad
-		
-	if currentKills >= targetKills:
-		draw_string(font, textPos , "Mission Complete")
+	if director.enemiesKilled >= director.enemyTarget:
+		draw_string(font, textPos , "Mission Complete!")
 	else:
-		draw_string(font, textPos, "Targets left: " + (targetKills - currentKills) as String)
+		draw_string(font, textPos, "Targets left: " + (director.enemyTarget - director.enemiesKilled) as String)
+	
+	textPos.x -= (barWidth + barPad * 5)
+	if director.alliesKilled >= director.allyTarget:
+		draw_string(font, textPos, "Ally forces defeated!")
+	else:
+		draw_string(font, textPos, "Allies remaining: " + (director.allyTarget - director.alliesKilled) as String)
 
 
 

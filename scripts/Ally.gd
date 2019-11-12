@@ -10,10 +10,11 @@ var angle = 0
 var fireRate = 10
 var fireTrack = 0
 var fireCool = 1000
-var bulletSpeed = 1000
+var bulletSpeed = 2000
 var target = 0
+var targetShip
 
-const MAX_SPEED = 500
+const MAX_SPEED = 1000
 const ACCEL = 23
 const DRAG = 1
 const RANGE = 700
@@ -27,43 +28,53 @@ func is_type(type):
 	return type == "Ally"
 
 func destroy():
+	director.alliesKilled += 1
 	director.allies.erase(self)
 	self.queue_free()
+
+func getTarget():
+	if director.ships.size() < 1:
+		target = -1
+		targetShip = null
+	else:
+		target = rng.randi_range(0, director.ships.size() - 1)
+		targetShip = director.ships[target]
 
 func _ready():
 	rng.randomize()
 	angle = rng.randf_range(0, 2*PI)
-	target = rng.randi_range(0, director.ships.size() - 1)
+	getTarget()
 	timer.wait_time = 10
 	timer.start()
 
 func _physics_process(delta):
 	
-	if target >= director.ships.size(): target = rng.randi_range(0, director.ships.size() - 1)
-	var targetShip = director.ships[target]
+	if targetShip == null or targetShip.is_queued_for_deletion():
+		getTarget()
 	
-	var diff = targetShip.position - self.position
-	var dist = diff.length()
-	if dist > RANGE:
-		var orbit = Vector2(sin(angle), -cos(angle))
-		diff += ORBIT*orbit
-		diff = diff.normalized()
-		vel += ACCEL * diff
-		sprite.rotation = atan2(diff.y, diff.x) + PI/2
-	else:
-		diff = diff.normalized()
-		sprite.rotation = atan2(diff.y, diff.x) + PI/2
-		
-		if fireTrack == 0:
-			var bullet = Bullet.instance()
-			bullet.team = -1
-			bullet.position = position + diff*32
-			bullet.velocity = diff * bulletSpeed
-			bullet.get_node("Sprite").rotation = sprite.rotation
-			bullet.set_modulate(Color(0.2, 0.2, 1))
-			director.add_child(bullet)
-			fireTrack = -1
-		
+	if targetShip != null:
+		var diff = targetShip.position - self.position
+		var dist = diff.length()
+		if dist > RANGE:
+			var orbit = Vector2(sin(angle), -cos(angle))
+			diff += ORBIT*orbit
+			diff = diff.normalized()
+			vel += ACCEL * diff
+			sprite.rotation = atan2(diff.y, diff.x) + PI/2
+		else:
+			diff = diff.normalized()
+			sprite.rotation = atan2(diff.y, diff.x) + PI/2
+			
+			if fireTrack == 0:
+				var bullet = Bullet.instance()
+				bullet.team = -1
+				bullet.position = position + diff*32
+				bullet.velocity = diff * bulletSpeed
+				bullet.get_node("Sprite").rotation = sprite.rotation
+				bullet.set_modulate(Color(0.2, 0.2, 1))
+				director.add_child(bullet)
+				fireTrack = -1
+			
 	if fireTrack != 0:
 		fireTrack += fireRate
 		if fireTrack >= fireCool:
