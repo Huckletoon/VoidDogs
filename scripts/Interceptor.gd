@@ -3,7 +3,7 @@ extends Area2D
 class_name Interceptor
 
 var Bullet = preload("res://objects/Bullet.tscn")
-#var font = preload("res://fonts/xolonium/xolonium.tres")
+var Particle = preload("res://objects/BoostParticle.tscn")
 var rng = RandomNumberGenerator.new()
 
 var vel = Vector2()
@@ -74,7 +74,17 @@ func _physics_process(delta):
 			bullet.set_modulate(Color(0.8, 0, 1))
 			get_parent().add_child(bullet)
 			fireTrack = -1
-		
+	#particles
+	if rng.randf() > 0.5:
+		var particle = Particle.instance()
+		particle.set_modulate(Color(0.8, 0.3, 0.8, 1))
+		var lookDir = Vector2(sin(sprite.rotation), -cos(sprite.rotation))
+		particle.position = position + lookDir * -12
+		particle.vel = lookDir * -50
+		particle.decay = 4
+		director.add_child(particle)
+	
+	
 	if fireTrack != 0:
 		fireTrack += fireRate
 		if fireTrack >= fireCool:

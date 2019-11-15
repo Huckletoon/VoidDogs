@@ -26,12 +26,19 @@ func _ready():
 	timer.process_mode = Timer.TIMER_PROCESS_PHYSICS
 	timer.wait_time = 1.5
 	for i in range(40):
-		if i%4 == 0:
+		if i%3 == 0:
 			spawnAlly()
 		else:
 			spawnEnemy()
 	timer.start()
 	rng.randomize()
+
+func _physics_process(delta):
+	if alliesKilled >= allyTarget:
+		pass
+	if enemiesKilled >= enemyTarget:
+		pass
+
 
 func spawnEnemy():
 	if ships.size() < MAX_SHIPS:

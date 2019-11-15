@@ -3,6 +3,7 @@ extends Area2D
 class_name Chaser
 
 var Bullet = preload("res://objects/Bullet.tscn")
+var Particle = preload("res://objects/BoostParticle.tscn")
 
 var rng = RandomNumberGenerator.new()
 var vel = Vector2()
@@ -79,6 +80,16 @@ func _physics_process(delta):
 			get_parent().add_child(bullet)
 			fireTrack = -1
 		
+	#particles
+	if rng.randf() > 0.5:
+		var particle = Particle.instance()
+		particle.set_modulate(Color(0.9, 0.7, 0.1, 1))
+		var lookDir = Vector2(sin(sprite.rotation), -cos(sprite.rotation))
+		particle.position = position + lookDir * -12
+		particle.vel = lookDir * -50
+		particle.decay = 4
+		director.add_child(particle)
+	
 	if fireTrack != 0:
 		fireTrack += fireRate
 		if fireTrack >= fireCool:

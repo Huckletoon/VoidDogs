@@ -3,6 +3,7 @@ extends KinematicBody2D
 class_name Player
 
 var Bullet = preload("res://objects/Bullet.tscn")
+var Particle = preload("res://objects/BoostParticle.tscn")
 var rng = RandomNumberGenerator.new()
 
 var vel = Vector2(0,0)
@@ -79,8 +80,6 @@ func _physics_process(delta):
 		vel = vel.clamped(MAX_SPEED)
 	else:
 		offsetCam(0,0,0.3)
-		if Input.is_action_just_pressed("pl_start"):
-			get_tree().change_scene("res://Title.tscn")
 		
 	vel = move_and_slide(vel)
 	shake()
@@ -99,12 +98,23 @@ func handleInput():
 	offsetCam(xvar * CAM_OFFSET_X, yvar * CAM_OFFSET_Y, CAM_SMOOTH)
 	radar.camOff = camera.offset
 	if yvar != 0 or xvar != 0: sprite.rotation = atan2(yvar, xvar) + PI/2
+	lookDir = Vector2(sin(sprite.rotation), -cos(sprite.rotation))
+	
+	#particles
+	if yvar != 0 or xvar != 0:
+		if rng.randf() > 0.5:
+			var particle = Particle.instance()
+			particle.set_modulate(Color(0, 0.8, 0.8, 1))
+			particle.position = position + lookDir * -12
+			particle.position += Vector2(rng.randi_range(-5, 5), rng.randi_range(0,5))
+			particle.vel = lookDir * -50
+			particle.decay = 1.75
+			get_parent().add_child(particle)
 	
 	#Stabilize
 	vel = lerp(vel, Vector2.ZERO, Input.get_action_strength("pl_stabilizer") * STABILIZER)
 	
 	#fire
-	lookDir = Vector2(sin(sprite.rotation), -cos(sprite.rotation))
 	if Input.is_action_pressed("pl_fire"):
 		if fire_track == 0 and !burned:
 			var bullet = Bullet.instance()

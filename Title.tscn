@@ -63,7 +63,7 @@ margin_top = 366.416
 margin_right = 335.175
 margin_bottom = 409.416
 custom_fonts/font = ExtResource( 2 )
-text = "1. Defeat 50 Enemy Ships
+text = "1. Defeat 100 Enemy Ships
 2. Survive"
 
 [node name="Label2" type="Label" parent="."]

@@ -3,13 +3,14 @@ extends Control
 const PAD = 50
 const RANGE = 2500
 const ASSIST_RANGE = 200
-const MAX_SIZE = 350
 const MIN_SIZE = 10
 const UI_SWAY = 0.25
+const BAR_BACK = Color(0.3, 0.3, 0.3, 1)
 
 #Radar
 var scrnWidth = 0
 var scrnHeight = 0
+var maxSize = 350
 var camOff = Vector2(0,0)
 var pos = Vector2(0,0)
 var size = Vector2(MIN_SIZE, MIN_SIZE)
@@ -56,6 +57,8 @@ var fpsPos = Vector2.ZERO
 var physStep = 0
 
 onready var leftShoulder = preload("res://sprites/left_shoulder.png")
+onready var hullSprite = preload("res://sprites/hull_plate.png")
+onready var heatSprite = preload("res://sprites/heat_plate.png")
 onready var font = preload("res://fonts/xolonium/xolonium.tres")
 onready var cam = get_node("../Camera2D")
 onready var director = get_node("../../Director")
@@ -67,10 +70,11 @@ func _ready():
 func calcRadar():
 	var x = -1 * (scrnWidth/2) + PAD + camOff.x
 	var y = scrnHeight/2 - PAD - size.y + camOff.y
+	maxSize = scrnWidth / 6
 	pos = Vector2(x,y)
 	if Input.is_action_just_pressed("pl_radar"):
 		radarOn = !radarOn
-		if radarOn: size = Vector2(MAX_SIZE, MAX_SIZE)
+		if radarOn: size = Vector2(maxSize, maxSize)
 		else: size = Vector2(MIN_SIZE, MIN_SIZE)
 	radarRect.position = lerp(radarRect.position, pos, UI_SWAY)
 	radarRect.size = lerp(radarRect.size, size, UI_SWAY)
@@ -137,9 +141,6 @@ func _physics_process(delta):
 	
 	calcHeat()
 	
-	#Pause
-	if Input.is_action_just_pressed("pl_start"): get_tree().paused = !get_tree().paused
-	
 	#DEBUG
 	var fpsX = scrnWidth * -0.5 + 16
 	var fpsY = scrnHeight * -0.5 + 32
@@ -174,6 +175,8 @@ func drawRadar():
 		draw_circle(radarRect.position + radarRect.size/2, 2, Color.blue)
 		draw_texture(leftShoulder, radarRect.position + Vector2(radarRect.size.x, -radarRect.size.y - leftShoulder.get_height()/2))
 	if director != null:
+		var blipSize = 3
+		if !radarOn: blipSize = 1
 		var center = radarRect.position + radarRect.size/2
 		for ship in director.ships:
 			var diff = ship.position - playerPos
@@ -182,9 +185,6 @@ func drawRadar():
 				diff = diff.normalized()
 				mag = (mag / RANGE) * (radarRect.size.x/2)
 				var posit = center + diff * mag
-				
-				var blipSize = 4
-				if !radarOn: blipSize = 1
 				
 				if ship.is_type("Enemy"): draw_circle(posit, blipSize, Color.darkgoldenrod)
 				elif ship.is_type("Chaser"): draw_circle(posit, blipSize, Color.firebrick)
@@ -197,8 +197,6 @@ func drawRadar():
 				mag = (mag / RANGE) * (radarRect.size.x/2)
 				var posit = center + diff * mag
 				
-				var blipSize = 4
-				if !radarOn: blipSize = 1
 				if ship.is_type("Ally"): draw_circle( posit, blipSize, Color.cyan)
 
 func drawObjective():
@@ -232,16 +230,17 @@ func _draw():
 	drawObjective()
 	
 	#Health
-	var back = Color(0.3, 0.3, 0.3, 1)
-	draw_rect(healthBackRect, back, true)
+	draw_rect(healthBackRect, BAR_BACK, true)
 	draw_rect(healthRect, Color.gray, true)
 	draw_string(font, healthRect.position + Vector2(14, -12), health as String, Color(0,0,0,1))
+	draw_texture(hullSprite, healthBackRect.position + Vector2(1, healthBackRect.size.y - 64))
 	
 	#Overheat
 	var heatCol = lerp(coolCol, hotCol, float(player.fireHeat)/float(player.MAX_HEAT))
 	if player.burned: heatCol = Color(0.3, 0.1, 0.3, 1)
-	draw_rect(heatBackRect, back, true)
+	draw_rect(heatBackRect, BAR_BACK, true)
 	draw_rect(heatRect, heatCol, true)
+	draw_texture(heatSprite, heatBackRect.position + Vector2(1, heatBackRect.size.y - 64))
 	
 	#Death
 	var black = Color.black
@@ -257,3 +256,4 @@ func _draw():
 	
 	#DEBUG
 	draw_string(font, fpsPos, "FPS: " + Engine.get_frames_per_second() as String)
+	draw_string(font, fpsPos + Vector2(0, 26), "alpha v4")

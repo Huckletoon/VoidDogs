@@ -2,6 +2,7 @@ extends Area2D
 
 class_name Ally
 
+var Particle = preload("res://objects/BoostParticle.tscn")
 var Bullet = preload("res://objects/Bullet.tscn")
 
 var rng = RandomNumberGenerator.new()
@@ -75,6 +76,17 @@ func _physics_process(delta):
 				director.add_child(bullet)
 				fireTrack = -1
 			
+	
+	#particles
+	if rng.randf() > 0.5:
+		var particle = Particle.instance()
+		particle.set_modulate(Color(0, 0.7, 0.9, 1))
+		var lookDir = Vector2(sin(sprite.rotation), -cos(sprite.rotation))
+		particle.position = position + lookDir * -12
+		particle.vel = lookDir * -50
+		particle.decay = 4
+		director.add_child(particle)
+	
 	if fireTrack != 0:
 		fireTrack += fireRate
 		if fireTrack >= fireCool:
