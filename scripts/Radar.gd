@@ -256,4 +256,4 @@ func _draw():
 	
 	#DEBUG
 	draw_string(font, fpsPos, "FPS: " + Engine.get_frames_per_second() as String)
-	draw_string(font, fpsPos + Vector2(0, 26), "alpha v4")
+	draw_string(font, fpsPos + Vector2(0, 26), "alpha v5")

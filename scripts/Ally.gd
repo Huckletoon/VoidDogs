@@ -4,6 +4,7 @@ class_name Ally
 
 var Particle = preload("res://objects/BoostParticle.tscn")
 var Bullet = preload("res://objects/Bullet.tscn")
+var Boom = preload("res://objects/BoomParticle.tscn")
 
 var rng = RandomNumberGenerator.new()
 var vel = Vector2()
@@ -31,6 +32,12 @@ func is_type(type):
 func destroy():
 	director.alliesKilled += 1
 	director.allies.erase(self)
+	for x in range(rng.randi_range(1,3)):
+		var boom = Boom.instance()
+		boom.position = position
+		boom.position += Vector2(rng.randi_range(-16, 16), rng.randi_range(-16, 16))
+		boom.rotate(rng.randf_range(0, 2*PI))
+		get_parent().add_child(boom)
 	self.queue_free()
 
 func getTarget():
@@ -80,7 +87,7 @@ func _physics_process(delta):
 	#particles
 	if rng.randf() > 0.5:
 		var particle = Particle.instance()
-		particle.set_modulate(Color(0, 0.7, 0.9, 1))
+		particle.set_modulate(Color(0, 0.4, 0.9, 1))
 		var lookDir = Vector2(sin(sprite.rotation), -cos(sprite.rotation))
 		particle.position = position + lookDir * -12
 		particle.vel = lookDir * -50

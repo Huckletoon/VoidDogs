@@ -4,6 +4,7 @@ class_name Player
 
 var Bullet = preload("res://objects/Bullet.tscn")
 var Particle = preload("res://objects/BoostParticle.tscn")
+var Boom = preload("res://objects/BoomParticle.tscn")
 var rng = RandomNumberGenerator.new()
 
 var vel = Vector2(0,0)
@@ -50,15 +51,19 @@ func is_type(type):
 	return type == "Player"
 
 func hit(damage):
-	shakeTrack = 2
+	var boom = Boom.instance()
+	boom.scale *= 0.5
+	boom.position = position
+	boom.position += Vector2(rng.randi_range(-16, 16), rng.randi_range(-16, 16))
+	boom.rotate(rng.randf_range(0, 2*PI))
+	get_parent().add_child(boom)
 	health -= damage
 	if health > 0:
+		shakeTrack = 2
 		radar.health = health
 	elif radar.health == 1:
 		radar.health = 0
 		isDead = true
-	elif isDead:
-		shakeTrack = shakeCool - 3
 
 func resized():
 	var wid = get_viewport_rect().size.x
@@ -73,13 +78,19 @@ func offsetCam(x, y, weight):
 
 func _physics_process(delta):
 	
-	radar.playerPos = self.position
+	radar.playerPos = position
 	
 	if !isDead:
 		handleInput()
 		vel = vel.clamped(MAX_SPEED)
 	else:
-		offsetCam(0,0,0.3)
+		#boom
+		if rng.randf() > 0.6:
+			var boom = Boom.instance()
+			boom.position = position
+			boom.position += Vector2(rng.randi_range(-16, 16), rng.randi_range(-16, 16))
+			boom.rotate(rng.randf_range(0, 2*PI))
+			get_parent().add_child(boom)
 		
 	vel = move_and_slide(vel)
 	shake()
@@ -104,7 +115,7 @@ func handleInput():
 	if yvar != 0 or xvar != 0:
 		if rng.randf() > 0.5:
 			var particle = Particle.instance()
-			particle.set_modulate(Color(0, 0.8, 0.8, 1))
+			particle.set_modulate(Color(0, 0.9, 0.9, 1))
 			particle.position = position + lookDir * -12
 			particle.position += Vector2(rng.randi_range(-5, 5), rng.randi_range(0,5))
 			particle.vel = lookDir * -50

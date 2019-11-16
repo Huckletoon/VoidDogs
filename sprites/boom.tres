@@ -1,0 +1,15 @@
+[gd_resource type="SpriteFrames" load_steps=5 format=2]
+
+[ext_resource path="res://sprites/boom0.png" type="Texture" id=1]
+[ext_resource path="res://sprites/boom1.png" type="Texture" id=2]
+[ext_resource path="res://sprites/boom2.png" type="Texture" id=3]
+[ext_resource path="res://sprites/boom3.png" type="Texture" id=4]
+
+[resource]
+animations = [ {
+"frames": [ ExtResource( 1 ), ExtResource( 1 ), ExtResource( 1 ), ExtResource( 1 ), ExtResource( 2 ), ExtResource( 2 ), ExtResource( 2 ), ExtResource( 3 ), ExtResource( 3 ), ExtResource( 4 ) ],
+"loop": false,
+"name": "boom",
+"speed": 12.0
+} ]
+

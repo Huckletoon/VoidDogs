@@ -4,6 +4,7 @@ class_name Interceptor
 
 var Bullet = preload("res://objects/Bullet.tscn")
 var Particle = preload("res://objects/BoostParticle.tscn")
+var Boom = preload("res://objects/BoomParticle.tscn")
 var rng = RandomNumberGenerator.new()
 
 var vel = Vector2()
@@ -34,6 +35,12 @@ func get_type():
 func destroy():
 	director.enemiesKilled += 1
 	director.ships.erase(self)
+	for x in range(rng.randi_range(1,3)):
+		var boom = Boom.instance()
+		boom.position = position
+		boom.position += Vector2(rng.randi_range(-16, 16), rng.randi_range(-16, 16))
+		boom.rotate(rng.randf_range(0, 2*PI))
+		get_parent().add_child(boom)
 	self.queue_free()
 
 func getTarget():

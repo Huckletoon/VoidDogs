@@ -1,7 +1,7 @@
-[gd_scene load_steps=13 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://scripts/Player.gd" type="Script" id=1]
-[ext_resource path="res://sprites/concept_ship.png" type="Texture" id=2]
+[ext_resource path="res://sprites/fieroShip.png" type="Texture" id=2]
 [ext_resource path="res://scripts/Radar.gd" type="Script" id=3]
 [ext_resource path="res://scripts/ParallaxBackground.gd" type="Script" id=4]
 [ext_resource path="res://sprites/stars0.png" type="Texture" id=5]
@@ -10,27 +10,7 @@
 [ext_resource path="res://sprites/stars3.png" type="Texture" id=8]
 
 [sub_resource type="ConvexPolygonShape2D" id=1]
-points = PoolVector2Array( 0, -16, 16, 16, -16, 16 )
-
-[sub_resource type="Curve" id=2]
-_data = [ Vector2( 0, 1 ), 0.0, 0.0, 0, 0, Vector2( 0.997464, 0 ), 0.0, 0.0, 0, 0 ]
-
-[sub_resource type="CurveTexture" id=3]
-curve = SubResource( 2 )
-
-[sub_resource type="ParticlesMaterial" id=4]
-emission_shape = 2
-emission_box_extents = Vector3( 2, 1, 1 )
-flag_disable_z = true
-spread = 9.0
-gravity = Vector3( 0, 0, 0 )
-initial_velocity = 15.0
-orbit_velocity = 0.0
-orbit_velocity_random = 0.0
-scale = 5.0
-scale_random = 0.7
-scale_curve = SubResource( 3 )
-color = Color( 0, 0.815686, 1, 1 )
+points = PoolVector2Array( -6, -16, 6, -16, 16, 15, -16, 15 )
 
 [node name="Player" type="KinematicBody2D"]
 script = ExtResource( 1 )
@@ -44,13 +24,10 @@ __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="Particles" type="Particles2D" parent="Sprite"]
-visible = false
-position = Vector2( 0, 13 )
-rotation = 1.5708
-lifetime = 2.0
-randomness = 0.5
-process_material = SubResource( 4 )
+[node name="Radar" type="Control" parent="."]
+margin_right = 40.0
+margin_bottom = 40.0
+script = ExtResource( 3 )
 
 [node name="Camera2D" type="Camera2D" parent="."]
 current = true
@@ -60,11 +37,6 @@ drag_margin_left = 0.0
 drag_margin_top = 0.0
 drag_margin_right = 0.0
 drag_margin_bottom = 0.0
-
-[node name="Radar" type="Control" parent="."]
-margin_right = 40.0
-margin_bottom = 40.0
-script = ExtResource( 3 )
 
 [node name="ParallaxBackground" type="ParallaxBackground" parent="."]
 script = ExtResource( 4 )
@@ -76,7 +48,7 @@ motion_mirroring = Vector2( 4000, 4000 )
 [node name="ColorRect" type="ColorRect" parent="ParallaxBackground/layer0"]
 margin_right = 4000.0
 margin_bottom = 4000.0
-color = Color( 0.054902, 0.054902, 0.054902, 1 )
+color = Color( 0.054902, 0.054902, 0.0941176, 1 )
 
 [node name="layer1" type="ParallaxLayer" parent="ParallaxBackground"]
 editor/display_folded = true
