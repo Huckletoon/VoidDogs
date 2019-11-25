@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/WIP_Action_Void_Loop.wav-934f9a9457ea256db20337302ae1d6db.sample"
+
+[deps]
+
+source_file="res://audio/WIP_Action_Void_Loop.wav"
+dest_files=[ "res://.import/WIP_Action_Void_Loop.wav-934f9a9457ea256db20337302ae1d6db.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=true
+edit/normalize=true
+edit/loop=false
+compress/mode=0

@@ -1,0 +1,75 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://scripts/PauseMenu.gd" type="Script" id=1]
+
+[node name="PauseMenu" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 1 )
+
+[node name="Cam" type="Camera2D" parent="."]
+anchor_mode = 0
+
+[node name="ColorRect" type="ColorRect" parent="."]
+margin_right = 3345.0
+margin_bottom = 1627.0
+color = Color( 0.0392157, 0, 0.184314, 1 )
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer"]
+margin_left = 439.0
+margin_top = 207.0
+margin_right = 584.0
+margin_bottom = 393.0
+
+[node name="Label" type="Label" parent="CenterContainer/VBoxContainer"]
+margin_right = 145.0
+margin_bottom = 66.0
+text = "Paused
+
+"
+align = 1
+
+[node name="Resume" type="Button" parent="CenterContainer/VBoxContainer"]
+margin_top = 70.0
+margin_right = 145.0
+margin_bottom = 96.0
+focus_neighbour_bottom = NodePath("../Options")
+focus_next = NodePath("../Options")
+text = "Resume"
+
+[node name="Options" type="Button" parent="CenterContainer/VBoxContainer"]
+margin_top = 100.0
+margin_right = 145.0
+margin_bottom = 126.0
+focus_neighbour_top = NodePath("../Resume")
+focus_neighbour_bottom = NodePath("../QuitMenu")
+focus_next = NodePath("../QuitMenu")
+focus_previous = NodePath("../Resume")
+text = "Options (WIP)"
+
+[node name="QuitMenu" type="Button" parent="CenterContainer/VBoxContainer"]
+margin_top = 130.0
+margin_right = 145.0
+margin_bottom = 156.0
+focus_neighbour_top = NodePath("../Options")
+focus_neighbour_bottom = NodePath("../QuitDesktop")
+focus_next = NodePath("../QuitDesktop")
+focus_previous = NodePath("../Options")
+text = "Quit To Title"
+
+[node name="QuitDesktop" type="Button" parent="CenterContainer/VBoxContainer"]
+margin_top = 160.0
+margin_right = 145.0
+margin_bottom = 186.0
+focus_neighbour_top = NodePath("../QuitMenu")
+focus_previous = NodePath("../QuitMenu")
+text = "Quit To Desktop"
+
+[connection signal="pressed" from="CenterContainer/VBoxContainer/Resume" to="." method="_on_Resume_pressed"]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/Options" to="." method="_on_Options_pressed"]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/QuitMenu" to="." method="_on_QuitMenu_pressed"]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/QuitDesktop" to="." method="_on_QuitDesktop_pressed"]

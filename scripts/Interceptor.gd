@@ -57,7 +57,7 @@ func _ready():
 
 func _physics_process(delta):
 	
-	if targetShip == null or targetShip.is_queued_for_deletion():
+	if targetShip == null or targetShip.is_queued_for_deletion() or rng.randf() > 0.99:
 		getTarget()
 	
 	var target = targetShip.position - self.position

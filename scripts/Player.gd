@@ -5,6 +5,7 @@ class_name Player
 var Bullet = preload("res://objects/Bullet.tscn")
 var Particle = preload("res://objects/BoostParticle.tscn")
 var Boom = preload("res://objects/BoomParticle.tscn")
+var Stable = preload("res://objects/StableParticle.tscn")
 var rng = RandomNumberGenerator.new()
 
 var vel = Vector2(0,0)
@@ -120,10 +121,23 @@ func handleInput():
 			particle.position += Vector2(rng.randi_range(-5, 5), rng.randi_range(0,5))
 			particle.vel = lookDir * -50
 			particle.decay = 1.75
+			particle.z_index = -1
 			get_parent().add_child(particle)
 	
 	#Stabilize
 	vel = lerp(vel, Vector2.ZERO, Input.get_action_strength("pl_stabilizer") * STABILIZER)
+	if Input.get_action_strength("pl_stabilizer") > 0:
+		if rng.randf() > 0.75:
+			var part = Stable.instance()
+			part.set_modulate(Color(0.2, 0.1, 0.8, 1))
+			part.position = position
+			part.position.x += rng.randi_range(-20, 20)
+			part.position.y += rng.randi_range(-20, 20)
+			part.decay = 1
+			part.spin = 6
+			part.z_index = -1
+			get_parent().add_child(part)
+			
 	
 	#fire
 	if Input.is_action_pressed("pl_fire"):

@@ -1,7 +1,7 @@
 extends Control
 
 const PAD = 50
-const RANGE = 2500
+const RANGE = 1500
 const ASSIST_RANGE = 200
 const MIN_SIZE = 10
 const UI_SWAY = 0.25
@@ -56,6 +56,9 @@ var hotCol = Color(0.9, 0.3, 0, 1)
 var fpsPos = Vector2.ZERO
 var physStep = 0
 
+var dialogue = null
+
+var dialogueNode = preload("res://objects/Dialogue.tscn")
 onready var leftShoulder = preload("res://sprites/left_shoulder.png")
 onready var hullSprite = preload("res://sprites/hull_plate.png")
 onready var heatSprite = preload("res://sprites/heat_plate.png")
@@ -145,11 +148,14 @@ func _physics_process(delta):
 	var fpsX = scrnWidth * -0.5 + 16
 	var fpsY = scrnHeight * -0.5 + 32
 	fpsPos = Vector2(fpsX,fpsY) + camOff
-	physStep = delta
 	
 	update()
+	
+	if director.objective and dialogue == null:
+		dialogue = dialogueNode.instance()
+		add_child(dialogue)
 
-#TODO
+
 func draw_outline(center):
 	var points = 48
 	var pointPool = PoolVector2Array()
@@ -163,7 +169,7 @@ func draw_outline(center):
 		
 		
 	for n in range(points):
-		draw_line(pointPool[n], pointPool[n+1], Color(0.1, 0.1, 0.1, 0.7))
+		draw_line(pointPool[n], pointPool[n+1], Color(0.1, 0.1, 0.1, 0.7), 1.5, true)
 
 func drawRadar():
 	var screen = Color.azure
@@ -180,24 +186,56 @@ func drawRadar():
 		var center = radarRect.position + radarRect.size/2
 		for ship in director.ships:
 			var diff = ship.position - playerPos
-			if !(diff.x > RANGE or diff.x < -RANGE or diff.y > RANGE or diff.y < -RANGE):
-				var mag = diff.length()
-				diff = diff.normalized()
-				mag = (mag / RANGE) * (radarRect.size.x/2)
-				var posit = center + diff * mag
-				
-				if ship.is_type("Enemy"): draw_circle(posit, blipSize, Color.darkgoldenrod)
-				elif ship.is_type("Chaser"): draw_circle(posit, blipSize, Color.firebrick)
-				elif ship.is_type("Interceptor"): draw_circle(posit, blipSize, Color.darkmagenta)
+			var blipColor
+			match ship.get_type():
+				"Chaser": blipColor = Color.darkgoldenrod
+				"Interceptor": blipColor = Color.darkmagenta
+			drawBlip(diff, center, blipSize, blipColor)
+			
 		for ship in director.allies:
 			var diff = ship.position - playerPos
-			if !(diff.x > RANGE or diff.x < -RANGE or diff.y > RANGE or diff.y < -RANGE):
-				var mag = diff.length()
-				diff = diff.normalized()
-				mag = (mag / RANGE) * (radarRect.size.x/2)
-				var posit = center + diff * mag
-				
-				if ship.is_type("Ally"): draw_circle( posit, blipSize, Color.cyan)
+			var blipColor
+			match ship.get_type():
+				"Ally": blipColor = Color.cyan
+			drawBlip(diff, center, blipSize, blipColor)
+			
+		
+		if director.allyCarrier != null:
+			var diff = director.allyCarrier.position - playerPos
+			drawBlip(diff, center, blipSize * 1.5, Color.yellow)
+		
+
+# Cohen-sutherland clipping
+func drawBlip(diff, center, size, color):
+	var posit
+	var boundCode = 0
+	if diff.x > RANGE: boundCode += 2
+	elif diff.x < -RANGE: boundCode += 1
+	if diff.y > RANGE: boundCode += 4
+	elif diff.y < -RANGE: boundCode += 8
+	match boundCode:
+		0:
+			var mag = diff.length()
+			diff = diff.normalized()
+			mag = (mag / RANGE) * (radarRect.size.x / 2)
+			posit = center + diff * mag
+		1:
+			posit = center
+			posit.x -= radarRect.size.x / 2
+			posit.y += clamp(diff.y / RANGE * (radarRect.size.y / 2), -radarRect.size.y / 2, radarRect.size.y / 2)
+		2:
+			posit = center
+			posit.x += radarRect.size.x / 2
+			posit.y += clamp(diff.y / RANGE * (radarRect.size.y / 2), -radarRect.size.y / 2, radarRect.size.y / 2)
+		4,5,6:
+			posit = center
+			posit.y += radarRect.size.y / 2
+			posit.x += clamp(diff.x / RANGE * (radarRect.size.x / 2), -radarRect.size.x / 2, radarRect.size.x / 2)
+		8,9,10:
+			posit = center
+			posit.y -= radarRect.size.y / 2
+			posit.x += clamp(diff.x / RANGE * (radarRect.size.x / 2), -radarRect.size.x / 2, radarRect.size.x / 2)
+	draw_circle(posit, size, color)
 
 func drawObjective():
 	draw_rect(barBackRect, Color.darkgray, true)
@@ -245,15 +283,11 @@ func _draw():
 	#Death
 	var black = Color.black
 	black.a = deathAlpha
+	if deathAlpha >= 1:
+		get_tree().current_scene.gameOver()
 	draw_rect(deathRect, black, true) 
-	if health <= 0:
-		draw_string(font,Vector2(-50, -64), "Game Over")
-		draw_string(font, Vector2(-54, -32), "Press Start")
-		
-	#Pause
-	if get_tree().paused:
-		draw_string(font,Vector2(-50, -64), "Paused")
 	
 	#DEBUG
 	draw_string(font, fpsPos, "FPS: " + Engine.get_frames_per_second() as String)
 	draw_string(font, fpsPos + Vector2(0, 26), "alpha v5")
+	#draw_string(font, fpsPos + Vector2(0, 52), "Difficulty: " + director.get_parent().get_parent().difficulty as String)

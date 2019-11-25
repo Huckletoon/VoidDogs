@@ -1,0 +1,15 @@
+[remap]
+
+importer="ogg_vorbis"
+type="AudioStreamOGGVorbis"
+path="res://.import/WIP_Action_Void_Loop.ogg-477201e8f652ffbff6d6d0a8e5161bae.oggstr"
+
+[deps]
+
+source_file="res://audio/WIP_Action_Void_Loop.ogg"
+dest_files=[ "res://.import/WIP_Action_Void_Loop.ogg-477201e8f652ffbff6d6d0a8e5161bae.oggstr" ]
+
+[params]
+
+loop=true
+loop_offset=0

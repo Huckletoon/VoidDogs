@@ -54,7 +54,7 @@ func generateStars(image, maxRadius):
 		# without radius
 		image.set_pixel(pos.x, pos.y, Color(1,1,1,1))
 		# with radius
-		for i in range(radius*2) :
+		for i in range(radius * 2) :
 			# i acts as x coordinate
 			if i != 0:
 				#var tempX = 

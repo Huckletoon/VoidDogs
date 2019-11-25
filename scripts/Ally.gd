@@ -21,13 +21,17 @@ const ACCEL = 23
 const DRAG = 1
 const RANGE = 700
 const ORBIT = 400
+const CLASS = "Ally"
 
 onready var sprite = get_node("Sprite")
 onready var timer = get_node("Timer")
 onready var director = get_parent().get_parent()
 
 func is_type(type):
-	return type == "Ally"
+	return type == CLASS
+
+func get_type():
+	return CLASS
 
 func destroy():
 	director.alliesKilled += 1
@@ -57,7 +61,7 @@ func _ready():
 
 func _physics_process(delta):
 	
-	if targetShip == null or targetShip.is_queued_for_deletion():
+	if targetShip == null or targetShip.is_queued_for_deletion() or rng.randf() > 0.96:
 		getTarget()
 	
 	if targetShip != null:
