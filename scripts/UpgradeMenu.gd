@@ -7,6 +7,7 @@ onready var button = get_node("ButtonContainer/HBoxContainer/Button")
 var upgrade0Text = ""
 var upgrade1Text = ""
 var nextLevel
+var selected = -1
 
 func _on_Button_pressed():
 	game.nextLevel()
@@ -14,6 +15,8 @@ func _on_Button_pressed():
 func _ready():
 	upgrade0.get_node("Label").text = upgrade0Text
 	upgrade1.get_node("Label").text = upgrade1Text
+	upgrade0.grab_focus()
+	_on_Upgrade1_focus_exited()
 	button.visible = false
 
 # Used to set up dialogue and different upgrades
@@ -41,7 +44,7 @@ func setLevel(level):
 
 
 func _on_Upgrade0_gui_input(event):
-	if event.is_class("InputEventMouseButton") and !event.pressed:
+	if (event.is_class("InputEventMouseButton") and !event.pressed) or (event.is_class("InputEventJoypadButton") and event.button_index == JOY_XBOX_A and event.pressed):
 		match nextLevel:
 			1.5:
 				game.stage1Upgrade = 1
@@ -54,10 +57,17 @@ func _on_Upgrade0_gui_input(event):
 			3.5:
 				game.stage5Upgrade = 1
 		button.visible = true
+		selected = 0
+		upgrade0.focus_neighbour_top = button.get_path()
+		upgrade1.focus_neighbour_bottom = button.get_path()
+		button.focus_neighbour_top = upgrade1.get_path()
+		button.focus_neighbour_bottom = upgrade0.get_path()
+		upgrade0.get_node("Label").text = upgrade0Text + "\nSelected"
+		upgrade1.get_node("Label").text = upgrade1Text
 
 
 func _on_Upgrade1_gui_input(event):
-	if event.is_class("InputEventMouseButton") and !event.pressed:
+	if (event.is_class("InputEventMouseButton") and !event.pressed) or (event.is_class("InputEventJoypadButton") and event.button_index == JOY_XBOX_A and event.pressed):
 		match nextLevel:
 			1.5:
 				game.stage1Upgrade = 2
@@ -70,3 +80,27 @@ func _on_Upgrade1_gui_input(event):
 			3.5: 
 				game.stage5Upgrade = 2
 		button.visible = true
+		selected = 1
+		upgrade0.focus_neighbour_top = button.get_path()
+		upgrade1.focus_neighbour_bottom = button.get_path()
+		button.focus_neighbour_top = upgrade1.get_path()
+		button.focus_neighbour_bottom = upgrade0.get_path()
+		upgrade1.get_node("Label").text = upgrade1Text + "\nSelected"
+		upgrade0.get_node("Label").text = upgrade0Text
+	
+
+
+func _on_Upgrade0_focus_entered():
+	upgrade0.set_modulate(Color(1, 1, 1, 1))
+
+
+func _on_Upgrade1_focus_entered():
+	upgrade1.set_modulate(Color(1, 1, 1, 1))
+
+
+func _on_Upgrade0_focus_exited():
+	upgrade0.set_modulate(Color(0.8, 0.8, 0.8, 1))
+
+
+func _on_Upgrade1_focus_exited():
+	upgrade1.set_modulate(Color(0.8, 0.8, 0.8, 1))

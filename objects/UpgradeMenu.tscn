@@ -58,6 +58,11 @@ margin_bottom = 247.0
 [node name="Upgrade0" type="HBoxContainer" parent="Upgrades/Container"]
 margin_right = 181.0
 margin_bottom = 66.0
+focus_neighbour_top = NodePath("../Upgrade1")
+focus_neighbour_bottom = NodePath("../Upgrade1")
+focus_next = NodePath("../Upgrade1")
+focus_previous = NodePath("../Upgrade1")
+focus_mode = 2
 
 [node name="Label" type="Label" parent="Upgrades/Container/Upgrade0"]
 margin_right = 109.0
@@ -76,6 +81,11 @@ texture = ExtResource( 2 )
 margin_top = 70.0
 margin_right = 181.0
 margin_bottom = 136.0
+focus_neighbour_top = NodePath("../Upgrade0")
+focus_neighbour_bottom = NodePath("../Upgrade0")
+focus_next = NodePath("../Upgrade0")
+focus_previous = NodePath("../Upgrade0")
+focus_mode = 2
 
 [node name="Label" type="Label" parent="Upgrades/Container/Upgrade1"]
 margin_right = 113.0
@@ -105,5 +115,9 @@ position = Vector2( 1068.76, 470.684 )
 texture = ExtResource( 4 )
 
 [connection signal="pressed" from="ButtonContainer/HBoxContainer/Button" to="." method="_on_Button_pressed"]
+[connection signal="focus_entered" from="Upgrades/Container/Upgrade0" to="." method="_on_Upgrade0_focus_entered"]
+[connection signal="focus_exited" from="Upgrades/Container/Upgrade0" to="." method="_on_Upgrade0_focus_exited"]
 [connection signal="gui_input" from="Upgrades/Container/Upgrade0" to="." method="_on_Upgrade0_gui_input"]
+[connection signal="focus_entered" from="Upgrades/Container/Upgrade1" to="." method="_on_Upgrade1_focus_entered"]
+[connection signal="focus_exited" from="Upgrades/Container/Upgrade1" to="." method="_on_Upgrade1_focus_exited"]
 [connection signal="gui_input" from="Upgrades/Container/Upgrade1" to="." method="_on_Upgrade1_gui_input"]

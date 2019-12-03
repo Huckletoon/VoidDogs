@@ -58,6 +58,7 @@ focus_neighbour_bottom = NodePath("../Retry")
 focus_next = NodePath("../Retry")
 focus_previous = NodePath("../Title")
 text = "Quit"
+
 [connection signal="pressed" from="CenterContainer/VBoxContainer/Retry" to="." method="_on_Retry_pressed"]
 [connection signal="pressed" from="CenterContainer/VBoxContainer/Title" to="." method="_on_Title_pressed"]
 [connection signal="pressed" from="CenterContainer/VBoxContainer/Quit" to="." method="_on_Quit_pressed"]
