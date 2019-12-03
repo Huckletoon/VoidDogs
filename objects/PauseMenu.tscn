@@ -20,10 +20,10 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer"]
-margin_left = 439.0
-margin_top = 207.0
-margin_right = 584.0
-margin_bottom = 393.0
+margin_left = 727.0
+margin_top = 357.0
+margin_right = 872.0
+margin_bottom = 543.0
 
 [node name="Label" type="Label" parent="CenterContainer/VBoxContainer"]
 margin_right = 145.0
@@ -37,8 +37,10 @@ align = 1
 margin_top = 70.0
 margin_right = 145.0
 margin_bottom = 96.0
+focus_neighbour_top = NodePath("../QuitDesktop")
 focus_neighbour_bottom = NodePath("../Options")
 focus_next = NodePath("../Options")
+focus_previous = NodePath("../QuitDesktop")
 text = "Resume"
 
 [node name="Options" type="Button" parent="CenterContainer/VBoxContainer"]
@@ -66,9 +68,10 @@ margin_top = 160.0
 margin_right = 145.0
 margin_bottom = 186.0
 focus_neighbour_top = NodePath("../QuitMenu")
+focus_neighbour_bottom = NodePath("../Resume")
+focus_next = NodePath("../Resume")
 focus_previous = NodePath("../QuitMenu")
 text = "Quit To Desktop"
-
 [connection signal="pressed" from="CenterContainer/VBoxContainer/Resume" to="." method="_on_Resume_pressed"]
 [connection signal="pressed" from="CenterContainer/VBoxContainer/Options" to="." method="_on_Options_pressed"]
 [connection signal="pressed" from="CenterContainer/VBoxContainer/QuitMenu" to="." method="_on_QuitMenu_pressed"]

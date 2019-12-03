@@ -17,23 +17,26 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer"]
-margin_left = 460.0
-margin_top = 233.0
-margin_right = 563.0
-margin_bottom = 366.0
+margin_left = 748.0
+margin_top = 383.0
+margin_right = 851.0
+margin_bottom = 516.0
 
 [node name="Label" type="Label" parent="CenterContainer/VBoxContainer"]
 margin_right = 103.0
 margin_bottom = 43.0
 text = "Game Over
 "
+align = 1
 
 [node name="Retry" type="Button" parent="CenterContainer/VBoxContainer"]
 margin_top = 47.0
 margin_right = 103.0
 margin_bottom = 73.0
+focus_neighbour_top = NodePath("../Quit")
 focus_neighbour_bottom = NodePath("../Title")
 focus_next = NodePath("../Title")
+focus_previous = NodePath("../Quit")
 text = "Retry"
 
 [node name="Title" type="Button" parent="CenterContainer/VBoxContainer"]
@@ -51,9 +54,10 @@ margin_top = 107.0
 margin_right = 103.0
 margin_bottom = 133.0
 focus_neighbour_top = NodePath("../Title")
+focus_neighbour_bottom = NodePath("../Retry")
+focus_next = NodePath("../Retry")
 focus_previous = NodePath("../Title")
 text = "Quit"
-
 [connection signal="pressed" from="CenterContainer/VBoxContainer/Retry" to="." method="_on_Retry_pressed"]
 [connection signal="pressed" from="CenterContainer/VBoxContainer/Title" to="." method="_on_Title_pressed"]
 [connection signal="pressed" from="CenterContainer/VBoxContainer/Quit" to="." method="_on_Quit_pressed"]

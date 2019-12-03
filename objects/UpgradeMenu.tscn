@@ -1,0 +1,109 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://scripts/UpgradeMenu.gd" type="Script" id=1]
+[ext_resource path="res://sprites/icon.png" type="Texture" id=2]
+[ext_resource path="res://sprites/Devonia_sketch.png" type="Texture" id=3]
+[ext_resource path="res://sprites/Baker_sketch.png" type="Texture" id=4]
+
+[node name="UpgradeMenu" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 1 )
+
+[node name="ColorRect" type="ColorRect" parent="."]
+margin_right = 3385.0
+margin_bottom = 1722.0
+color = Color( 0.490196, 0.470588, 0.564706, 1 )
+
+[node name="ButtonContainer" type="CenterContainer" parent="."]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -128.0
+margin_top = -105.0
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="HBoxContainer" type="HBoxContainer" parent="ButtonContainer"]
+margin_left = 21.0
+margin_top = 39.0
+margin_right = 106.0
+margin_bottom = 65.0
+
+[node name="Button" type="Button" parent="ButtonContainer/HBoxContainer"]
+margin_right = 85.0
+margin_bottom = 26.0
+text = "Continue"
+
+[node name="Upgrades" type="CenterContainer" parent="."]
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+margin_left = -245.0
+margin_top = -191.0
+margin_bottom = 168.0
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Container" type="VBoxContainer" parent="Upgrades"]
+margin_left = 32.0
+margin_top = 111.0
+margin_right = 213.0
+margin_bottom = 247.0
+
+[node name="Upgrade0" type="HBoxContainer" parent="Upgrades/Container"]
+margin_right = 181.0
+margin_bottom = 66.0
+
+[node name="Label" type="Label" parent="Upgrades/Container/Upgrade0"]
+margin_right = 109.0
+margin_bottom = 66.0
+text = "Upgrade 1
+Lorem Ipsum 
+Boom Boom"
+
+[node name="TextureRect" type="TextureRect" parent="Upgrades/Container/Upgrade0"]
+margin_left = 113.0
+margin_right = 177.0
+margin_bottom = 66.0
+texture = ExtResource( 2 )
+
+[node name="Upgrade1" type="HBoxContainer" parent="Upgrades/Container"]
+margin_top = 70.0
+margin_right = 181.0
+margin_bottom = 136.0
+
+[node name="Label" type="Label" parent="Upgrades/Container/Upgrade1"]
+margin_right = 113.0
+margin_bottom = 66.0
+text = "Upgrade 2
+Lorem Ipsum
+Oof my bones"
+
+[node name="TextureRect" type="TextureRect" parent="Upgrades/Container/Upgrade1"]
+margin_left = 117.0
+margin_right = 181.0
+margin_bottom = 66.0
+texture = ExtResource( 2 )
+
+[node name="Label" type="Label" parent="."]
+margin_right = 40.0
+margin_bottom = 20.0
+rect_scale = Vector2( 4, 4 )
+text = "UNDER CONSTRUCTION"
+
+[node name="Devonia_sketch" type="Sprite" parent="."]
+position = Vector2( 628.928, 467.155 )
+texture = ExtResource( 3 )
+
+[node name="Baker_sketch" type="Sprite" parent="."]
+position = Vector2( 1068.76, 470.684 )
+texture = ExtResource( 4 )
+
+[connection signal="pressed" from="ButtonContainer/HBoxContainer/Button" to="." method="_on_Button_pressed"]
+[connection signal="gui_input" from="Upgrades/Container/Upgrade0" to="." method="_on_Upgrade0_gui_input"]
+[connection signal="gui_input" from="Upgrades/Container/Upgrade1" to="." method="_on_Upgrade1_gui_input"]

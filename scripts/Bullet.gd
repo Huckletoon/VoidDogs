@@ -22,11 +22,16 @@ func _on_Bullet_area_entered(area):
 			if area.is_type("Enemy") or area.is_type("Chaser") or area.is_type("Interceptor"):
 				area.destroy()
 				self.queue_free()
+			elif area.is_type("Armored"):
+				area.hit(damage)
+				self.queue_free()
 		1:
 			if area.is_type("Ally"):
 				area.destroy()
 				self.queue_free()
-			
+			elif area.is_type("AllyArmored"):
+				area.hit(damage)
+				self.queue_free()
 
 
 func _on_Bullet_body_entered(body):

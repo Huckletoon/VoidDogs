@@ -29,15 +29,15 @@ var allyPos = Vector2.ZERO
 var allySize = Vector2.ZERO
 var allyRect = Rect2(allyPos, allySize)
 
+#vitals
+var vitalHeight = 300
+var vitalWidth = 20
+var vitalPad = 8
+
 #Health
-var maxHealth = 0
-var health = 0
 var healthPos = Vector2.ZERO
 var healthSize = Vector2.ZERO
 var healthRect = Rect2(healthPos, healthSize)
-var healthHeight = 300
-var healthWidth = 50
-var healthPad = 8
 var healthBackRect = Rect2(healthPos, healthSize)
 var deathAlpha = 0
 var deathRect = Rect2(Vector2(-3000, -3000), Vector2(6000, 6000))
@@ -46,11 +46,16 @@ var deathRect = Rect2(Vector2(-3000, -3000), Vector2(6000, 6000))
 var heatPos = Vector2.ZERO
 var heatSize = Vector2.ZERO
 var heatRect = Rect2(heatPos, heatSize)
-var heatHeight = healthHeight
-var heatPad = healthPad
 var heatBackRect = Rect2(heatPos, heatSize)
 var coolCol = Color(0, 0.3, 0.9, 1)
 var hotCol = Color(0.9, 0.3, 0, 1)
+
+#evade
+var evadePos = Vector2.ZERO
+var evadeSize = Vector2.ZERO
+var evadeRect = Rect2(evadePos, evadeSize)
+var evadeBackRect = Rect2(evadePos, evadeSize)
+var evadeCol = Color.yellow
 
 #DEBUG
 var fpsPos = Vector2.ZERO
@@ -59,10 +64,11 @@ var physStep = 0
 var dialogue = null
 
 var dialogueNode = preload("res://objects/Dialogue.tscn")
-onready var leftShoulder = preload("res://sprites/left_shoulder.png")
-onready var hullSprite = preload("res://sprites/hull_plate.png")
-onready var heatSprite = preload("res://sprites/heat_plate.png")
-onready var font = preload("res://fonts/xolonium/xolonium.tres")
+var leftShoulder = preload("res://sprites/left_shoulder.png")
+var hullSprite = preload("res://sprites/hull_plate.png")
+var heatSprite = preload("res://sprites/heat_plate.png")
+var evadeSprite = preload("res://sprites/evadePlate.png")
+var font = preload("res://fonts/xolonium/xolonium.tres")
 onready var cam = get_node("../Camera2D")
 onready var director = get_node("../../Director")
 onready var player = get_parent()
@@ -72,14 +78,14 @@ func _ready():
 
 func calcRadar():
 	var x = -1 * (scrnWidth/2) + PAD + camOff.x
-	var y = scrnHeight/2 - PAD - size.y + camOff.y
+	var y = scrnHeight/2 - PAD - radarRect.size.y + camOff.y
 	maxSize = scrnWidth / 6
 	pos = Vector2(x,y)
 	if Input.is_action_just_pressed("pl_radar"):
 		radarOn = !radarOn
 		if radarOn: size = Vector2(maxSize, maxSize)
 		else: size = Vector2(MIN_SIZE, MIN_SIZE)
-	radarRect.position = lerp(radarRect.position, pos, UI_SWAY)
+	radarRect.position = pos
 	radarRect.size = lerp(radarRect.size, size, UI_SWAY)
 
 func calcObjective():
@@ -88,49 +94,60 @@ func calcObjective():
 	barPos = Vector2(barX, barY)
 	barSize = Vector2(barWidth - min(barWidth as float * (director.enemiesKilled as float/director.enemyTarget as float)
 		, barWidth), 32)
-	barRect.position = lerp(barRect.position, barPos, UI_SWAY)
+	barRect.position = barPos
 	barRect.size = barSize
 	
 	allyPos = barPos
 	allyPos.x -= (barWidth + barPad * 6)
 	allySize = Vector2(barWidth - min(barWidth as float * (director.alliesKilled as float/director.allyTarget as float)
 		, barWidth), 32)
-	allyRect.position = lerp(allyRect.position, allyPos, UI_SWAY)
+	allyRect.position = allyPos
 	allyRect.size = allySize
 	
 	barPos -= Vector2(barPad, barPad)
 	barSize = Vector2(barWidth + 2*barPad, barSize.y + 2*barPad)
-	barBackRect.position = lerp(barBackRect.position, barPos, UI_SWAY)
+	barBackRect.position = barPos
 	barBackRect.size = barSize
 	
 	
 
 func calcHealth():
-	var healthX = scrnWidth/2 - healthPad - 90 + camOff.x
-	var healthY = scrnHeight/2 - healthPad - 12 + camOff.y
+	var healthX = scrnWidth/2 - vitalPad - 90 + camOff.x
+	var healthY = scrnHeight/2 - vitalPad - 12 + camOff.y
 	healthPos = Vector2(healthX, healthY)
-	healthSize = Vector2(healthWidth,-healthHeight + healthHeight * (1-(float(health)/float(maxHealth))))
-	healthRect.position = lerp(healthRect.position, healthPos, UI_SWAY)
+	healthSize = Vector2(vitalWidth,-vitalHeight + vitalHeight * (1-(float(player.health)/float(player.maxHealth))))
+	healthRect.position = healthPos
 	healthRect.size = healthSize
-	healthPos += Vector2(-healthPad, healthPad)
-	healthSize = Vector2(healthSize.x + 2*healthPad, -(healthHeight + 2*barPad))
-	healthBackRect.position = lerp(healthBackRect.position, healthPos, UI_SWAY)
+	healthPos += Vector2(-vitalPad, vitalPad)
+	healthSize = Vector2(healthSize.x + 2*vitalPad, -(vitalHeight + 2*barPad))
+	healthBackRect.position = healthPos
 	healthBackRect.size = healthSize 
-	if health <= 0 and deathAlpha < 1:
-		deathAlpha += 0.01
+	if player.health <= 0 and deathAlpha < 1:
+		deathAlpha += 0.02
 
 func calcHeat():
-	var heatX = scrnWidth/2 - heatPad*4 - 90 - healthSize.x + camOff.x
-	var heatY = scrnHeight/2 - heatPad - 12 + camOff.y
+	var heatX = scrnWidth/2 - vitalPad*4 - 90 - healthSize.x + camOff.x
+	var heatY = scrnHeight/2 - vitalPad - 12 + camOff.y
 	heatPos = Vector2(heatX, heatY)
-	heatSize = Vector2(healthWidth, -heatHeight + heatHeight * max(0,(1-(float(player.fireHeat)/float(player.MAX_HEAT)))))
-	heatRect.position = lerp(heatRect.position, heatPos, UI_SWAY)
+	heatSize = Vector2(vitalWidth, -vitalHeight + vitalHeight * max(0,(1-(float(player.fireHeat)/float(player.MAX_HEAT)))))
+	heatRect.position = heatPos
 	heatRect.size = heatSize
-	heatPos += Vector2(-heatPad, heatPad)
-	heatSize = Vector2(heatSize.x + 2*heatPad, -(heatHeight + 2*heatPad))
-	heatBackRect.position = lerp(heatBackRect.position, heatPos, UI_SWAY)
+	heatPos += Vector2(-vitalPad, vitalPad)
+	heatSize = Vector2(heatSize.x + 2*vitalPad, -(vitalHeight + 2*vitalPad))
+	heatBackRect.position = heatPos
 	heatBackRect.size = heatSize
 	
+func calcEvade():
+	var evadeX = scrnWidth/2 - healthSize.x - heatSize.x - vitalPad*7 - 90 + camOff.x
+	var evadeY = scrnHeight/2 - vitalPad - 12 + camOff.y
+	evadePos = Vector2(evadeX, evadeY)
+	evadeSize = Vector2(vitalWidth, -vitalHeight + vitalHeight * max(0, float(player.evadeTrack)/float(player.evadeLimit)))
+	evadeRect.position = evadePos
+	evadeRect.size = evadeSize
+	evadePos += Vector2(-vitalPad, vitalPad)
+	evadeSize = Vector2(evadeSize.x + 2*vitalPad, -(vitalHeight + 2*vitalPad))
+	evadeBackRect.position = evadePos
+	evadeBackRect.size = evadeSize
 
 func _physics_process(delta):
 	#Radar
@@ -139,10 +156,10 @@ func _physics_process(delta):
 	#Kill Tracker
 	calcObjective()
 	
-	#Health
+	#Vitals
 	calcHealth()
-	
 	calcHeat()
+	calcEvade()
 	
 	#DEBUG
 	var fpsX = scrnWidth * -0.5 + 16
@@ -186,17 +203,19 @@ func drawRadar():
 		var center = radarRect.position + radarRect.size/2
 		for ship in director.ships:
 			var diff = ship.position - playerPos
-			var blipColor
+			var blipColor = Color.white
 			match ship.get_type():
 				"Chaser": blipColor = Color.darkgoldenrod
 				"Interceptor": blipColor = Color.darkmagenta
+				"Armored": blipColor = Color(0.99, 0.4, 0.01, 1)
 			drawBlip(diff, center, blipSize, blipColor)
 			
 		for ship in director.allies:
 			var diff = ship.position - playerPos
-			var blipColor
+			var blipColor = Color.white
 			match ship.get_type():
 				"Ally": blipColor = Color.cyan
+				"AllyArmored": blipColor = Color(0, 0.9, 0.4, 1)
 			drawBlip(diff, center, blipSize, blipColor)
 			
 		
@@ -258,6 +277,25 @@ func drawObjective():
 	else:
 		draw_string(font, textPos, "Allies remaining: " + (director.allyTarget - director.alliesKilled) as String)
 
+func drawVitals():
+	#Health
+	draw_rect(healthBackRect, BAR_BACK, true)
+	draw_rect(healthRect, Color.gray, true)
+	draw_texture(hullSprite, healthBackRect.position + Vector2(-8, healthBackRect.size.y - 64))
+	
+	#Overheat
+	var heatCol = lerp(coolCol, hotCol, float(player.fireHeat)/float(player.MAX_HEAT))
+	if player.burned: heatCol = Color(0.3, 0.1, 0.3, 1)
+	draw_rect(heatBackRect, BAR_BACK, true)
+	draw_rect(heatRect, heatCol, true)
+	draw_texture(heatSprite, heatBackRect.position + Vector2(-8, heatBackRect.size.y - 64))
+	
+	#evade
+	draw_rect(evadeBackRect, BAR_BACK)
+	draw_rect(evadeRect, evadeCol)
+	draw_texture(evadeSprite, evadeBackRect.position + Vector2(-8, evadeBackRect.size.y - 64))
+	
+	
 
 
 func _draw():
@@ -267,18 +305,7 @@ func _draw():
 	#Target Bar
 	drawObjective()
 	
-	#Health
-	draw_rect(healthBackRect, BAR_BACK, true)
-	draw_rect(healthRect, Color.gray, true)
-	draw_string(font, healthRect.position + Vector2(14, -12), health as String, Color(0,0,0,1))
-	draw_texture(hullSprite, healthBackRect.position + Vector2(1, healthBackRect.size.y - 64))
-	
-	#Overheat
-	var heatCol = lerp(coolCol, hotCol, float(player.fireHeat)/float(player.MAX_HEAT))
-	if player.burned: heatCol = Color(0.3, 0.1, 0.3, 1)
-	draw_rect(heatBackRect, BAR_BACK, true)
-	draw_rect(heatRect, heatCol, true)
-	draw_texture(heatSprite, heatBackRect.position + Vector2(1, heatBackRect.size.y - 64))
+	drawVitals()
 	
 	#Death
 	var black = Color.black
@@ -289,5 +316,5 @@ func _draw():
 	
 	#DEBUG
 	draw_string(font, fpsPos, "FPS: " + Engine.get_frames_per_second() as String)
-	draw_string(font, fpsPos + Vector2(0, 26), "alpha v5")
+	draw_string(font, fpsPos + Vector2(0, 26), "alpha v6")
 	#draw_string(font, fpsPos + Vector2(0, 52), "Difficulty: " + director.get_parent().get_parent().difficulty as String)

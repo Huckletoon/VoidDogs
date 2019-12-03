@@ -15,10 +15,10 @@ __meta__ = {
 }
 
 [node name="VSplitContainer" type="VSplitContainer" parent="CenterContainer"]
-margin_left = 470.0
-margin_top = 256.0
-margin_right = 554.0
-margin_bottom = 344.0
+margin_left = 758.0
+margin_top = 406.0
+margin_right = 842.0
+margin_bottom = 494.0
 
 [node name="Title" type="Label" parent="CenterContainer/VSplitContainer"]
 margin_right = 84.0
@@ -76,7 +76,7 @@ margin_top = 42.3277
 margin_right = 175.018
 margin_bottom = 62.3277
 custom_fonts/font = ExtResource( 2 )
-text = "LT - Stabilize"
+text = "LT - Evade"
 
 [node name="Label3" type="Label" parent="."]
 margin_left = 47.7343

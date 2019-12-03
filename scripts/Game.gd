@@ -5,6 +5,7 @@ var worldScene = preload("res://World.tscn")
 var loadScene = preload("res://LoadScreen.tscn")
 var pauseMenu = preload("res://objects/PauseMenu.tscn")
 var GameOver = preload("res://objects/GameOver.tscn")
+var UpgradeScene = preload("res://objects/UpgradeMenu.tscn")
 
 var difficulty
 var level
@@ -13,6 +14,12 @@ var worldNode
 var loadNode
 var pauseNode
 var gameOverNode
+var upgradeNode
+var stage1Upgrade = 0
+var stage2Upgrade = 0
+var stage3Upgrade = 0
+var stage4Upgrade = 0
+var stage5Upgrade = 0
 
 func _ready():
 	pause_mode = PAUSE_MODE_PROCESS
@@ -53,6 +60,7 @@ func gameOver():
 			worldNode.queue_free()
 			remove_child(worldNode)
 			worldNode = null
+	level = "gameOver"
 	gameOverNode = GameOver.instance()
 	add_child(gameOverNode)
 	
@@ -81,19 +89,26 @@ func clearLevel():
 	match level:
 		"world":
 			worldNode.queue_free()
-			remove_child(worldNode)
 			worldNode = null
 	difficulty += 0.5
-	nextLevel()
+	goUpgrade()
+
+func goUpgrade():
+	upgradeNode = UpgradeScene.instance()
+	upgradeNode.setLevel(difficulty)
+	add_child(upgradeNode)
+	
 
 func nextLevel():
+	upgradeNode.queue_free()
+	remove_child(upgradeNode)
+	upgradeNode = null
 	worldNode = worldScene.instance()
 	var director = worldNode.get_node("Director")
 	director.enemyTarget = ceil(75 * difficulty)
 	director.allyTarget = max(40, ceil(40 / difficulty))
 	director.MAX_SHIPS = min(ceil(100 * difficulty), 500)
 	director.wait = max(0.2, 1.5/difficulty)
-	#remove_child(loadNode)
 	add_child(worldNode)
 	level = "world"
 
@@ -101,9 +116,16 @@ func returnToTitle():
 	match level:
 		"world":
 			worldNode.queue_free()
-			remove_child(worldNode)
 			worldNode = null
+		"gameOver":
+			gameOverNode.queue_free()
+			gameOverNode = null
 	difficulty = 1
+	stage1Upgrade = 0
+	stage2Upgrade = 0
+	stage3Upgrade = 0
+	stage4Upgrade = 0
+	stage5Upgrade = 0
 	add_child(titleNode)
 	titleNode.get_node("CenterContainer/VSplitContainer/VBoxContainer/Start").grab_focus()
 	level = "Title"

@@ -15,6 +15,16 @@ _global_script_classes=[ {
 "path": "res://scripts/Ally.gd"
 }, {
 "base": "Area2D",
+"class": "AllyArmored",
+"language": "GDScript",
+"path": "res://scripts/AllyArmored.gd"
+}, {
+"base": "Area2D",
+"class": "Armored",
+"language": "GDScript",
+"path": "res://scripts/Armored.gd"
+}, {
+"base": "Area2D",
 "class": "Bullet",
 "language": "GDScript",
 "path": "res://scripts/Bullet.gd"
@@ -46,6 +56,8 @@ _global_script_classes=[ {
 } ]
 _global_script_class_icons={
 "Ally": "",
+"AllyArmored": "",
+"Armored": "",
 "Bullet": "",
 "Chaser": "",
 "Director": "",
@@ -66,8 +78,12 @@ gdscript/warnings/enable=false
 
 [display]
 
+window/size/width=1600
+window/size/height=900
 window/size/borderless=true
 window/size/fullscreen=true
+window/stretch/mode="2d"
+window/stretch/aspect="keep"
 
 [global]
 
