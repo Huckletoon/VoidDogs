@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://audio/Explode.wav" type="AudioStream" id=1]
+[ext_resource path="res://scripts/Explode.gd" type="Script" id=2]
+
+[node name="Explode" type="AudioStreamPlayer2D"]
+stream = ExtResource( 1 )
+volume_db = 5.0
+autoplay = true
+max_distance = 3000.0
+bus = "SFX"
+script = ExtResource( 2 )
+

@@ -27,20 +27,21 @@ func setLevel(level):
 		1.5: #FireRate or Evade
 			upgrade0Text = "Offense\nFire Rate Up"
 			upgrade1Text = "Defense\nEvasion Up"
-		2: #Damage or Health
+		2.0: #Damage or Health
 			upgrade0Text = "Offense\nDamage Up"
 			upgrade1Text = "Defense\nHealth Up"
 		2.5: #LaserSize or Movement
 			upgrade0Text = "Offense\nLaser Size Up"
 			upgrade1Text = "Defense\nMovement Up"
-		3: #FireRate or Health
+		3.0: #FireRate or Health
 			upgrade0Text = "Offense\nFire Rate Up"
 			upgrade1Text = "Defense\nHealth Up"
 		3.5: #Cooling or Evade
 			upgrade0Text = "Offense\nCooling Up"
 			upgrade1Text = "Defense\nEvasion Up"
-		4: #Evade and Cooling
+		4.0: #Evade and Cooling
 			pass
+		_: print(level)
 
 
 func _on_Upgrade0_gui_input(event):
@@ -48,11 +49,11 @@ func _on_Upgrade0_gui_input(event):
 		match nextLevel:
 			1.5:
 				game.stage1Upgrade = 1
-			2:
+			2.0:
 				game.stage2Upgrade = 1
 			2.5: 
 				game.stage3Upgrade = 1
-			3: 
+			3.0: 
 				game.stage4Upgrade = 1
 			3.5:
 				game.stage5Upgrade = 1
@@ -71,11 +72,11 @@ func _on_Upgrade1_gui_input(event):
 		match nextLevel:
 			1.5:
 				game.stage1Upgrade = 2
-			2: 
+			2.0: 
 				game.stage2Upgrade = 2
 			2.5: 
 				game.stage3Upgrade = 2
-			3: 
+			3.0: 
 				game.stage4Upgrade = 2
 			3.5: 
 				game.stage5Upgrade = 2

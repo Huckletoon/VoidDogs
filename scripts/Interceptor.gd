@@ -5,6 +5,7 @@ class_name Interceptor
 var Bullet = preload("res://objects/Bullet.tscn")
 var Particle = preload("res://objects/BoostParticle.tscn")
 var Boom = preload("res://objects/BoomParticle.tscn")
+var Explode = preload("res://objects/Explode.tscn")
 var rng = RandomNumberGenerator.new()
 
 var vel = Vector2()
@@ -24,6 +25,7 @@ const RANGE = 500
 const ORBIT = 300
 
 onready var sprite = get_node("Sprite")
+onready var laser = get_node("Laser")
 onready var director = get_parent().get_parent()
 
 func is_type(type):
@@ -35,6 +37,10 @@ func get_type():
 func destroy():
 	director.enemiesKilled += 1
 	director.ships.erase(self)
+	var explode = Explode.instance()
+	explode.position = position
+	explode.pitch_scale += rng.randf_range(-0.1, 0.1)
+	director.add_child(explode)
 	for x in range(rng.randi_range(1,3)):
 		var boom = Boom.instance()
 		boom.position = position
@@ -73,6 +79,7 @@ func _physics_process(delta):
 		sprite.rotation = atan2(leadNorm.y, leadNorm.x) + PI/2
 		if targetDist > ORBIT: vel += ACCEL * leadNorm
 		if fireTrack == 0:
+			laser.play()
 			var bullet = Bullet.instance()
 			bullet.team = 1
 			bullet.position = position + leadNorm*32

@@ -21,6 +21,8 @@ var stage3Upgrade = 0
 var stage4Upgrade = 0
 var stage5Upgrade = 0
 
+var baseTarget = 50
+
 func _ready():
 	pause_mode = PAUSE_MODE_PROCESS
 	level = "Title"
@@ -58,19 +60,15 @@ func gameOver():
 	match level:
 		"world": 
 			worldNode.queue_free()
-			remove_child(worldNode)
 			worldNode = null
 	level = "gameOver"
 	gameOverNode = GameOver.instance()
 	add_child(gameOverNode)
 	
 func retry():
-	match level:
-		"world":
-			gameOverNode.queue_free()
-			remove_child(gameOverNode)
-			gameOverNode = null
-			startGame(1)
+	gameOverNode.queue_free()
+	gameOverNode = null
+	startGame(1)
 
 func startGame(arg):
 	if arg == 0: remove_child(titleNode)
@@ -78,7 +76,7 @@ func startGame(arg):
 		worldNode = worldScene.instance()
 	add_child(worldNode)
 	var director = worldNode.get_node("Director")
-	director.enemyTarget = ceil(75 * difficulty)
+	director.enemyTarget = ceil(baseTarget * difficulty)
 	director.allyTarget = max(40, ceil(40 / difficulty))
 	director.MAX_SHIPS = min(ceil(100 * difficulty), 500)
 	director.wait = max(0.2, 1.5/difficulty)
@@ -105,7 +103,7 @@ func nextLevel():
 	upgradeNode = null
 	worldNode = worldScene.instance()
 	var director = worldNode.get_node("Director")
-	director.enemyTarget = ceil(75 * difficulty)
+	director.enemyTarget = ceil(baseTarget * difficulty)
 	director.allyTarget = max(40, ceil(40 / difficulty))
 	director.MAX_SHIPS = min(ceil(100 * difficulty), 500)
 	director.wait = max(0.2, 1.5/difficulty)

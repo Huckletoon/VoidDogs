@@ -22,8 +22,10 @@ var enemiesKilled = 0
 var alliesKilled = 0
 var wait = 1
 var objective = false
+var carrierRadius
 
 var MAX_SHIPS = 100
+var RADIUS = 7000
 
 onready var timer = get_node("Timer")
 onready var player = get_node("../Player")
@@ -34,12 +36,15 @@ func _ready():
 	timer.process_mode = Timer.TIMER_PROCESS_PHYSICS
 	timer.wait_time = wait
 	rng.randomize()
+	carrierRadius = rng.randf_range(0.7, 1) * RADIUS
+	var angle = rng.randf_range(0, 2*PI)
 	allyCarrier = AllyCarrier.instance()
-	allyCarrier.position = Vector2(rng.randi_range(-7000, -5000), rng.randi_range(-2000, 2000))
+	allyCarrier.position = Vector2(sin(angle), cos(angle)) * carrierRadius
 	add_child(allyCarrier)
 	player.position = allyCarrier.position + Vector2(100, 0)
+	angle += PI
 	enemyCarrier = EnemyCarrier.instance()
-	enemyCarrier.position = Vector2(rng.randi_range(5000, 7000), rng.randi_range(-2000, 2000))
+	enemyCarrier.position = Vector2(sin(angle), cos(angle)) * carrierRadius
 	initLevel()
 	
 

@@ -31,7 +31,7 @@ var shakeY = 0
 var shakeCool = 20
 var shakeMax = 64
 
-var CAM_OFFSET_X = 400
+var CAM_OFFSET_X = 300
 var CAM_OFFSET_Y = 200
 
 var MAX_SPEED = 1000
@@ -46,6 +46,9 @@ const BULLET_SPEED = 2000
 onready var sprite = get_node("Sprite")
 onready var camera = get_node("Camera2D")
 onready var radar = get_node("Radar")
+onready var laserSFX = get_node("LaserSFX")
+onready var hitSFX = get_node("HitSFX")
+onready var heatSFX = get_node("HeatSFX")
 onready var game = get_tree().current_scene
 
 func _ready():
@@ -60,6 +63,7 @@ func is_type(type):
 	return type == "Player"
 
 func hit(damage):
+	hitSFX.play()
 	var boom = Boom.instance()
 	boom.scale *= 0.5
 	boom.position = position
@@ -75,7 +79,7 @@ func hit(damage):
 func resized():
 	var wid = get_viewport_rect().size.x
 	var hei = get_viewport_rect().size.y
-	CAM_OFFSET_X = wid * 0.4
+	CAM_OFFSET_X = wid * 0.3
 	CAM_OFFSET_Y = hei * 0.4
 	radar.scrnWidth = wid
 	radar.scrnHeight = hei
@@ -176,6 +180,7 @@ func handleInput():
 	#fire
 	if Input.is_action_pressed("pl_fire") and !evading:
 		if fire_track == 0 and !burned:
+			laserSFX.play()
 			var bullet = Bullet.instance()
 			if laserUp: 
 				bullet.scale *= 2
@@ -188,6 +193,7 @@ func handleInput():
 			fire_track = -1
 			fireHeat += fire_rate + 8
 			if fireHeat >= MAX_HEAT:
+				heatSFX.play()
 				burned = true
 	if fire_track != 0:
 		fire_track += fire_rate

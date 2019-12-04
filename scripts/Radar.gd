@@ -1,7 +1,7 @@
 extends Control
 
 const PAD = 50
-const RANGE = 1500
+const RANGE = 1750
 const ASSIST_RANGE = 200
 const MIN_SIZE = 10
 const UI_SWAY = 0.25
