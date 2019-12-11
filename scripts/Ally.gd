@@ -16,6 +16,7 @@ var fireCool = 1000
 var bulletSpeed = 2000
 var target = 0
 var targetShip
+var retreating = false
 
 const MAX_SPEED = 1000
 const ACCEL = 23
@@ -67,33 +68,38 @@ func _ready():
 
 func _physics_process(delta):
 	
-	if targetShip == null or targetShip.is_queued_for_deletion() or rng.randf() > 0.96:
-		getTarget()
-	
-	if targetShip != null:
+	if !retreating:
+		if targetShip == null or targetShip.is_queued_for_deletion() or rng.randf() > 0.96:
+			getTarget()
+		if targetShip != null:
+			var diff = targetShip.position - self.position
+			var dist = diff.length()
+			if dist > RANGE:
+				var orbit = Vector2(sin(angle), -cos(angle))
+				diff += ORBIT*orbit
+				diff = diff.normalized()
+				vel += ACCEL * diff
+				sprite.rotation = atan2(diff.y, diff.x) + PI/2
+			else:
+				diff = diff.normalized()
+				sprite.rotation = atan2(diff.y, diff.x) + PI/2
+				
+				if fireTrack == 0:
+					laser.play()
+					var bullet = Bullet.instance()
+					bullet.team = -1
+					bullet.position = position + diff*32
+					bullet.velocity = diff * bulletSpeed
+					bullet.get_node("Sprite").rotation = sprite.rotation
+					bullet.set_modulate(Color(0.2, 0.2, 1))
+					director.add_child(bullet)
+					fireTrack = -1
+	else:
+		targetShip = director.allyCarrier
 		var diff = targetShip.position - self.position
-		var dist = diff.length()
-		if dist > RANGE:
-			var orbit = Vector2(sin(angle), -cos(angle))
-			diff += ORBIT*orbit
-			diff = diff.normalized()
-			vel += ACCEL * diff
-			sprite.rotation = atan2(diff.y, diff.x) + PI/2
-		else:
-			diff = diff.normalized()
-			sprite.rotation = atan2(diff.y, diff.x) + PI/2
-			
-			if fireTrack == 0:
-				laser.play()
-				var bullet = Bullet.instance()
-				bullet.team = -1
-				bullet.position = position + diff*32
-				bullet.velocity = diff * bulletSpeed
-				bullet.get_node("Sprite").rotation = sprite.rotation
-				bullet.set_modulate(Color(0.2, 0.2, 1))
-				director.add_child(bullet)
-				fireTrack = -1
-			
+		diff = diff.normalized()
+		sprite.rotation = atan2(diff.y, diff.x) + PI/2
+		vel += ACCEL * diff
 	
 	#particles
 	if rng.randf() > 0.5:
@@ -117,6 +123,9 @@ func _physics_process(delta):
 	
 	vel = vel.clamped(MAX_SPEED)
 	position += vel * delta
+
+func retreat():
+	retreating = true
 
 func _on_Timer_timeout():
 	

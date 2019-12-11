@@ -11,7 +11,7 @@ func _on_Resume_pressed():
 
 
 func _on_Options_pressed():
-	pass # Replace with function body.
+	get_parent().options()
 
 
 func _on_QuitMenu_pressed():

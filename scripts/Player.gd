@@ -10,7 +10,7 @@ var rng = RandomNumberGenerator.new()
 
 var vel = Vector2(0,0)
 var lookDir = Vector2()
-var fire_rate = 150
+var fire_rate = 110
 var fire_track = 0
 var fireHeat = 0
 var burned = false
@@ -21,7 +21,7 @@ var damage = 1
 var laserUp = false
 
 var evading = false
-var evadeLimit = 500
+var evadeLimit = 800
 var evadeRate = 15
 var evadeTrack = 0
 
@@ -39,8 +39,8 @@ var ACCEL = 15
 const DRAG = 1
 const CAM_SMOOTH = 0.018
 var FIRE_COOL = 1000
-var MAX_HEAT = 800
-var HEAT_COOL = 10
+var MAX_HEAT = 600
+var HEAT_COOL = 8
 const BULLET_SPEED = 2000
 
 onready var sprite = get_node("Sprite")
@@ -87,16 +87,20 @@ func resized():
 func offsetCam(x, y, weight):
 	camera.offset = lerp(camera.offset, Vector2(x,y), weight)
 
+func complete():
+	radar.completeAlpha = 0.001
+
 func loadUpgrades():
 	if game.stage1Upgrade == 1:
 		FIRE_COOL -= 250
 	elif game.stage1Upgrade == 2:
-		evadeLimit += 250
+		evadeLimit += 400
 		
 	if game.stage2Upgrade == 1:
 		damage += 1
 	elif game.stage2Upgrade == 2:
 		maxHealth += 5
+		health = maxHealth
 		
 	if game.stage3Upgrade == 1:
 		laserUp = true
@@ -108,12 +112,13 @@ func loadUpgrades():
 		FIRE_COOL -= 250
 	elif game.stage4Upgrade == 2:
 		maxHealth += 5
+		health = maxHealth
 		
 	if game.stage5Upgrade == 1:
 		MAX_HEAT += 100
 		HEAT_COOL += 5
 	elif game.stage5Upgrade == 2:
-		evadeLimit += 250
+		evadeLimit += 400
 
 func _physics_process(delta):
 	

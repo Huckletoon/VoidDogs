@@ -16,7 +16,7 @@ var AllyArmored = preload("res://objects/AllyArmored.tscn")
 var AllyCarrier = preload("res://objects/AllyCarrier.tscn")
 var EnemyCarrier = preload("res://objects/EnemyCarrier.tscn")
 
-var enemyTarget = 35#DEBUG75
+var enemyTarget# = 10#DEBUG75
 var allyTarget = 40
 var enemiesKilled = 0
 var alliesKilled = 0
@@ -45,12 +45,13 @@ func _ready():
 	angle += PI
 	enemyCarrier = EnemyCarrier.instance()
 	enemyCarrier.position = Vector2(sin(angle), cos(angle)) * carrierRadius
+	add_child(enemyCarrier)
 	initLevel()
 	
 
 func initLevel():
 	for i in range(10):
-		if i%3 == 0:
+		if i%3 == 0 and !objective:
 			spawnAlly()
 		else:
 			spawnEnemy()
@@ -61,6 +62,8 @@ func _physics_process(delta):
 		pass
 	if enemiesKilled >= enemyTarget:
 		objective = true
+		for ship in allies:
+			if ship != null: ship.retreat()
 
 func clearLevel():
 	get_tree().current_scene.clearLevel()

@@ -72,6 +72,7 @@ focus_neighbour_bottom = NodePath("../Resume")
 focus_next = NodePath("../Resume")
 focus_previous = NodePath("../QuitMenu")
 text = "Quit To Desktop"
+
 [connection signal="pressed" from="CenterContainer/VBoxContainer/Resume" to="." method="_on_Resume_pressed"]
 [connection signal="pressed" from="CenterContainer/VBoxContainer/Options" to="." method="_on_Options_pressed"]
 [connection signal="pressed" from="CenterContainer/VBoxContainer/QuitMenu" to="." method="_on_QuitMenu_pressed"]

@@ -2,10 +2,15 @@ extends Node
 
 var titleScene = preload("res://Title.tscn")
 var worldScene = preload("res://World.tscn")
+var bossScene = preload("res://BossWorld.tscn")
 var loadScene = preload("res://LoadScreen.tscn")
 var pauseMenu = preload("res://objects/PauseMenu.tscn")
 var GameOver = preload("res://objects/GameOver.tscn")
 var UpgradeScene = preload("res://objects/UpgradeMenu.tscn")
+var OptionsMenu = preload("res://objects/OptionsMenu.tscn")
+
+onready var musicBus = AudioServer.get_bus_index("Music")
+onready var sfxBus = AudioServer.get_bus_index("SFX")
 
 var difficulty
 var level
@@ -15,16 +20,22 @@ var loadNode
 var pauseNode
 var gameOverNode
 var upgradeNode
+var optionsNode
 var stage1Upgrade = 0
 var stage2Upgrade = 0
 var stage3Upgrade = 0
 var stage4Upgrade = 0
 var stage5Upgrade = 0
 
-var baseTarget = 50
+var musicVol = 0
+var sfxVol = -5
+
+var baseTarget = 40
 
 func _ready():
 	pause_mode = PAUSE_MODE_PROCESS
+	AudioServer.set_bus_volume_db(musicBus, musicVol)
+	AudioServer.set_bus_volume_db(sfxBus, sfxVol)
 	level = "Title"
 	difficulty = 1.0
 	titleNode = titleScene.instance()
@@ -33,12 +44,10 @@ func _ready():
 func _process(delta):
 	if Input.is_action_just_pressed("pl_start"):
 		match level:
-			"world":
+			"world", "boss":
 				if !worldNode.get_node("Player").isDead: 
 					if get_tree().paused: unpause()
 					else: pause()
-				else: 
-					returnToTitle()
 			"Title":
 				startGame(0)
 
@@ -56,22 +65,56 @@ func unpause():
 	if worldNode != null: worldNode.get_node("Player/Camera2D").current = true
 	get_tree().paused = false
 
+func options():
+	optionsNode = OptionsMenu.instance()
+	optionsNode.pause_mode = Node.PAUSE_MODE_PROCESS
+	add_child(optionsNode)
+	optionsNode.get_node("CenterContainer/VBoxContainer/MusicSlider").connect("value_changed", self, "musicSlider")
+	optionsNode.get_node("CenterContainer/VBoxContainer/SFXSlider").connect("value_changed", self, "sfxSlider")
+	optionsNode.get_node("CenterContainer/VBoxContainer/Back").connect("pressed", self, "optionsReturn")
+	optionsNode.get_node("CenterContainer/VBoxContainer/MusicSlider").grab_focus()
+	optionsNode.get_node("Cam").current = true
+	pauseNode.get_node("Cam").current = false
+
+func optionsReturn():
+	pauseNode.get_node("Cam").current = true
+	optionsNode.get_node("Cam").current = false
+	optionsNode.queue_free()
+	optionsNode = null
+	pauseNode.get_node("CenterContainer/VBoxContainer/Resume").grab_focus()
+	
+
+func musicSlider(value):
+	musicVol = value
+	AudioServer.set_bus_volume_db(musicBus, musicVol)
+	
+
+func sfxSlider(value):
+	sfxVol = value
+	AudioServer.set_bus_volume_db(sfxBus, sfxVol)
+
 func gameOver():
 	match level:
-		"world": 
+		"world", "boss": 
 			worldNode.queue_free()
 			worldNode = null
-	level = "gameOver"
 	gameOverNode = GameOver.instance()
 	add_child(gameOverNode)
 	
 func retry():
 	gameOverNode.queue_free()
 	gameOverNode = null
-	startGame(1)
+	if level == "world": startGame(1)
+	elif level == "boss": startGame(2)
 
 func startGame(arg):
 	if arg == 0: remove_child(titleNode)
+	if arg == 1 or arg == 0:
+		startWorld()
+	elif arg == 2:
+		startBoss()
+
+func startWorld():
 	if worldNode == null:
 		worldNode = worldScene.instance()
 	add_child(worldNode)
@@ -83,13 +126,23 @@ func startGame(arg):
 	director.initLevel()
 	level = "world"
 
+func startBoss():
+	if worldNode == null:
+		worldNode = bossScene.instance()
+	add_child(worldNode)
+	level = "boss"
+	pass
+
 func clearLevel():
 	match level:
 		"world":
 			worldNode.queue_free()
 			worldNode = null
-	difficulty += 0.5
-	goUpgrade()
+			difficulty += 0.5
+			goUpgrade()
+		"boss":
+			returnToTitle()
+	
 
 func goUpgrade():
 	upgradeNode = UpgradeScene.instance()
@@ -99,20 +152,15 @@ func goUpgrade():
 
 func nextLevel():
 	upgradeNode.queue_free()
-	remove_child(upgradeNode)
 	upgradeNode = null
-	worldNode = worldScene.instance()
-	var director = worldNode.get_node("Director")
-	director.enemyTarget = ceil(baseTarget * difficulty)
-	director.allyTarget = max(40, ceil(40 / difficulty))
-	director.MAX_SHIPS = min(ceil(100 * difficulty), 500)
-	director.wait = max(0.2, 1.5/difficulty)
-	add_child(worldNode)
-	level = "world"
+	if difficulty != 4.0:
+		startWorld()
+	else:
+		startBoss()
 
 func returnToTitle():
 	match level:
-		"world":
+		"world", "boss":
 			worldNode.queue_free()
 			worldNode = null
 		"gameOver":

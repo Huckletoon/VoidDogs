@@ -18,6 +18,11 @@ func _ready():
 	upgrade0.grab_focus()
 	_on_Upgrade1_focus_exited()
 	button.visible = false
+	if nextLevel == 4.0:
+		upgrade0.visible = false
+		upgrade1.visible = false
+		button.visible = true
+		button.grab_focus()
 
 # Used to set up dialogue and different upgrades
 #TODO: Dialogue

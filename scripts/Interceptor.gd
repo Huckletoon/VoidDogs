@@ -68,9 +68,9 @@ func _physics_process(delta):
 	
 	var target = targetShip.position - self.position
 	var targetDist = target.length()
-	var farLead = target + player.vel * delta
+	var farLead = target + targetShip.vel * delta
 	var farLeadNorm = farLead.normalized()
-	var lead = target + player.vel.normalized() * (player.vel.length() / player.MAX_SPEED * 100)
+	var lead = target + targetShip.vel.normalized() * (targetShip.vel.length() / targetShip.MAX_SPEED * 100)
 	var leadNorm = lead.normalized()
 	if targetDist > RANGE:
 		sprite.rotation = atan2(farLeadNorm.y, farLeadNorm.x) + PI/2

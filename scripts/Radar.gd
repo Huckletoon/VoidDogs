@@ -41,6 +41,7 @@ var healthRect = Rect2(healthPos, healthSize)
 var healthBackRect = Rect2(healthPos, healthSize)
 var deathAlpha = 0
 var deathRect = Rect2(Vector2(-3000, -3000), Vector2(6000, 6000))
+var completeAlpha = 0
 
 #Overheat
 var heatPos = Vector2.ZERO
@@ -154,12 +155,15 @@ func _physics_process(delta):
 	calcRadar()
 	
 	#Kill Tracker
-	calcObjective()
+	if director != null: calcObjective()
 	
 	#Vitals
 	calcHealth()
 	calcHeat()
 	calcEvade()
+	
+	if completeAlpha != 0:
+		completeAlpha += delta / 2
 	
 	#DEBUG
 	var fpsX = scrnWidth * -0.5 + 16
@@ -168,7 +172,7 @@ func _physics_process(delta):
 	
 	update()
 	
-	if director.objective and dialogue == null:
+	if director != null and director.objective and dialogue == null:
 		dialogue = dialogueNode.instance()
 		add_child(dialogue)
 
@@ -197,10 +201,10 @@ func drawRadar():
 	else: 
 		draw_circle(radarRect.position + radarRect.size/2, 2, Color.blue)
 		draw_texture(leftShoulder, radarRect.position + Vector2(radarRect.size.x, -radarRect.size.y - leftShoulder.get_height()/2))
+	var blipSize = 3
+	if !radarOn: blipSize = 1
+	var center = radarRect.position + radarRect.size/2
 	if director != null:
-		var blipSize = 3
-		if !radarOn: blipSize = 1
-		var center = radarRect.position + radarRect.size/2
 		for ship in director.ships:
 			var diff = ship.position - playerPos
 			var blipColor = Color.white
@@ -222,7 +226,14 @@ func drawRadar():
 		if director.allyCarrier != null:
 			var diff = director.allyCarrier.position - playerPos
 			drawBlip(diff, center, blipSize * 1.5, Color.yellow)
-		
+	else:
+		blipSize = 4 if radarOn else 1
+		var dir = get_node("../../BossDirector")
+		var ship = null
+		if dir != null: 
+			ship = dir.get_child(0)
+			var diff = ship.position - playerPos
+			drawBlip(diff, center, blipSize, Color.red)
 
 # Cohen-sutherland clipping
 func drawBlip(diff, center, size, color):
@@ -303,7 +314,7 @@ func _draw():
 	drawRadar()
 	
 	#Target Bar
-	drawObjective()
+	if director != null: drawObjective()
 	
 	drawVitals()
 	
@@ -313,6 +324,11 @@ func _draw():
 	if deathAlpha >= 1:
 		get_tree().current_scene.gameOver()
 	draw_rect(deathRect, black, true) 
+	
+	black.a = completeAlpha
+	if completeAlpha >= 1:
+		get_tree().current_scene.clearLevel()
+	draw_rect(deathRect, black, true)
 	
 	#DEBUG
 	draw_string(font, fpsPos, "FPS: " + Engine.get_frames_per_second() as String)

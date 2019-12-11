@@ -8,7 +8,6 @@ onready var sprite = get_node("Sprite")
 
 func _physics_process(delta):
 	
-	#position += vel * delta
 	sprite.rotate(spin * delta)
 	sprite.scale -= Vector2(decay, decay) * delta
 	if sprite.scale.x < 0:

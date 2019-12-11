@@ -18,5 +18,4 @@ script = ExtResource( 3 )
 [node name="OppGroup" type="Node" parent="Director"]
 
 [node name="AllyGroup" type="Node" parent="Director"]
-
 [connection signal="timeout" from="Director/Timer" to="Director" method="_on_Timer_timeout"]

@@ -1,0 +1,81 @@
+[gd_scene format=2]
+
+[node name="OptionsMenu" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Cam" type="Camera2D" parent="."]
+anchor_mode = 0
+
+[node name="ColorRect" type="ColorRect" parent="."]
+margin_right = 3500.0
+margin_bottom = 1750.0
+color = Color( 0.0392157, 0, 0.184314, 1 )
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer"]
+margin_left = 707.0
+margin_top = 323.0
+margin_right = 893.0
+margin_bottom = 577.0
+
+[node name="Options" type="Label" parent="CenterContainer/VBoxContainer"]
+margin_right = 186.0
+margin_bottom = 66.0
+text = "Options
+
+"
+align = 1
+
+[node name="Music" type="Label" parent="CenterContainer/VBoxContainer"]
+margin_top = 70.0
+margin_right = 186.0
+margin_bottom = 90.0
+text = "Music Volume"
+align = 1
+
+[node name="MusicSlider" type="HSlider" parent="CenterContainer/VBoxContainer"]
+margin_top = 94.0
+margin_right = 186.0
+margin_bottom = 110.0
+focus_neighbour_top = NodePath("../Back")
+focus_neighbour_bottom = NodePath("../SFXSlider")
+min_value = -40.0
+max_value = 0.0
+
+[node name="SFX" type="Label" parent="CenterContainer/VBoxContainer"]
+margin_top = 114.0
+margin_right = 186.0
+margin_bottom = 157.0
+text = "
+Sound Effects Volume"
+align = 1
+
+[node name="SFXSlider" type="HSlider" parent="CenterContainer/VBoxContainer"]
+margin_top = 161.0
+margin_right = 186.0
+margin_bottom = 177.0
+focus_neighbour_top = NodePath("../MusicSlider")
+focus_neighbour_bottom = NodePath("../Back")
+min_value = -40.0
+max_value = 0.0
+
+[node name="Break" type="Label" parent="CenterContainer/VBoxContainer"]
+margin_top = 181.0
+margin_right = 186.0
+margin_bottom = 224.0
+text = "
+"
+align = 1
+
+[node name="Back" type="Button" parent="CenterContainer/VBoxContainer"]
+margin_top = 228.0
+margin_right = 186.0
+margin_bottom = 254.0
+focus_neighbour_top = NodePath("../SFXSlider")
+focus_neighbour_bottom = NodePath("../MusicSlider")
+text = "Back"
+
