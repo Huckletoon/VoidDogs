@@ -21,7 +21,7 @@ var damage = 1
 var laserUp = false
 
 var evading = false
-var evadeLimit = 800
+var evadeLimit = 900
 var evadeRate = 15
 var evadeTrack = 0
 
@@ -119,6 +119,11 @@ func loadUpgrades():
 		HEAT_COOL += 5
 	elif game.stage5Upgrade == 2:
 		evadeLimit += 400
+	
+	if game.finalUpgrade:
+		evadeLimit += 400
+		MAX_HEAT += 100
+		HEAT_COOL += 5
 
 func _physics_process(delta):
 	

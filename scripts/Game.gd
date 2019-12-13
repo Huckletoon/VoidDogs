@@ -26,6 +26,7 @@ var stage2Upgrade = 0
 var stage3Upgrade = 0
 var stage4Upgrade = 0
 var stage5Upgrade = 0
+var finalUpgrade = false
 
 var musicVol = 0
 var sfxVol = -5
@@ -74,14 +75,17 @@ func options():
 	optionsNode.get_node("CenterContainer/VBoxContainer/Back").connect("pressed", self, "optionsReturn")
 	optionsNode.get_node("CenterContainer/VBoxContainer/MusicSlider").grab_focus()
 	optionsNode.get_node("Cam").current = true
-	pauseNode.get_node("Cam").current = false
+	if get_tree().paused: pauseNode.get_node("Cam").current = false
 
 func optionsReturn():
-	pauseNode.get_node("Cam").current = true
 	optionsNode.get_node("Cam").current = false
 	optionsNode.queue_free()
 	optionsNode = null
-	pauseNode.get_node("CenterContainer/VBoxContainer/Resume").grab_focus()
+	if get_tree().paused: 
+		pauseNode.get_node("Cam").current = true
+		pauseNode.get_node("CenterContainer/VBoxContainer/Resume").grab_focus()
+	else:
+		titleNode.get_node("CenterContainer/VSplitContainer/VBoxContainer/Start").grab_focus()
 	
 
 func musicSlider(value):
@@ -172,6 +176,7 @@ func returnToTitle():
 	stage3Upgrade = 0
 	stage4Upgrade = 0
 	stage5Upgrade = 0
+	finalUpgrade = false
 	add_child(titleNode)
 	titleNode.get_node("CenterContainer/VSplitContainer/VBoxContainer/Start").grab_focus()
 	level = "Title"

@@ -79,7 +79,7 @@ func _physics_process(delta):
 				bullet.position = position + leadNorm*32
 				bullet.velocity = leadNorm * bulletSpeed
 				bullet.get_node("Sprite").rotation = sprite.rotation
-				bullet.set_modulate(Color(0.8, 0, 1))
+				bullet.set_modulate(Color(0.8, 0, 0.2))
 				get_parent().add_child(bullet)
 				fireTrack = -1
 		if fireTrack != 0:
@@ -89,7 +89,7 @@ func _physics_process(delta):
 		#particles
 		if rng.randf() > 0.5:
 			var particle = Particle.instance()
-			particle.set_modulate(Color(0.8, 0.3, 0.8, 1))
+			particle.set_modulate(Color(0.8, 0.3, 0.3, 1))
 			var lookDir = Vector2(sin(sprite.rotation), -cos(sprite.rotation))
 			particle.position = position + lookDir * -12
 			particle.vel = lookDir * -50

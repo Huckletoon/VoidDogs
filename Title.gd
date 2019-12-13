@@ -13,3 +13,7 @@ func _on_Start_pressed():
 
 func _on_Exit_pressed():
 	get_tree().quit()
+
+
+func _on_Options_pressed():
+	get_parent().options()

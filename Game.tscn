@@ -10,3 +10,4 @@ script = ExtResource( 1 )
 stream = ExtResource( 2 )
 autoplay = true
 bus = "Music"
+
